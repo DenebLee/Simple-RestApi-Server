@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'kr.nanoit'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.projectlombok:lombok:1.18.22'
+    implementation  'commons-codec:commons-codec:1.15'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    // log
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+    implementation 'ch.qos.logback:logback-core:1.2.11'
+    implementation 'ch.qos.logback:logback-access:1.2.11'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.13.3'
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.0'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    implementation group: 'com.github.marschall', name: 'threeten-jpa-oracle-api', version: '1.11'
+    implementation group: 'org.json', name: 'json', version: '20090211'
+    implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0'
+}
+
+test {
+    useJUnitPlatform()
+}
