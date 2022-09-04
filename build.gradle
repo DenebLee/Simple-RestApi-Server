@@ -30,6 +30,9 @@ dependencies {
     implementation group: 'com.github.marschall', name: 'threeten-jpa-oracle-api', version: '1.11'
     implementation group: 'org.json', name: 'json', version: '20090211'
     implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0'
+    implementation group: 'javax.json', name: 'javax.json-api', version: '1.0-b01'
+    implementation group: 'javax.inject', name: 'javax.inject', version: '1'
+
 }
 
 test {

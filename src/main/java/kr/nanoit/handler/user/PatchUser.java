@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import kr.nanoit.db.service.UtilJson;
+import kr.nanoit.extension.RelatedBody;
 import org.json.JSONException;
 
 /**
@@ -27,7 +28,7 @@ public final class PatchUser {
     try {
       // print
       InputStream inputStream = exchange.getRequestBody();
-      System.out.println(parseBody(new BufferedReader(new InputStreamReader(inputStream, CHARSET))));
+      System.out.println(RelatedBody.parseBody(new BufferedReader(new InputStreamReader(inputStream, CHARSET))));
 
       // response
       Headers headers = exchange.getResponseHeaders();
@@ -41,18 +42,5 @@ public final class PatchUser {
     } finally {
       exchange.close();
     }
-  }
-
-  private static String makeBody() throws JSONException {
-    return UtilJson.createJsonData("test", 1231, "test@test.com").toString();
-  }
-
-  private static String parseBody(BufferedReader bufferedReader) throws IOException {
-    StringBuilder builder = new StringBuilder();
-    String inputLine;
-    while ((inputLine = bufferedReader.readLine()) != null) {
-      builder.append(inputLine);
-    }
-    return builder.toString();
   }
 }
