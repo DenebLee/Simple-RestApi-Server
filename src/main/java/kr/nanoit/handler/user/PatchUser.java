@@ -8,13 +8,10 @@ import static kr.nanoit.extension.Variable.STATUS_OK;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import kr.nanoit.db.service.UtilJson;
+
 import kr.nanoit.extension.RelatedBody;
-import org.json.JSONException;
 
 /**
  * 클래스 한개는 하나의 일만 한다.

@@ -37,7 +37,7 @@ public class UserHandler implements HttpHandler {
     try {
       Headers headers = exchange.getResponseHeaders();
       headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);
-      exchange.sendResponseHeaders(400, 0);
+      exchange.sendResponseHeaders(405, -1);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

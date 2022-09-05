@@ -11,8 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import kr.nanoit.db.service.UtilJson;
+
 import org.json.JSONException;
 
 /**
@@ -43,9 +42,9 @@ public final class DeleteUser {
     }
   }
 
-  private static String makeBody() throws JSONException {
-    return UtilJson.createJsonData("test", 1231, "test@test.com").toString();
-  }
+//  private static String makeBody() throws JSONException {
+//    return UtilJson.createJsonData("test", 1231, "test@test.com").toString();
+//  }
 
   private static String parseBody(BufferedReader bufferedReader) throws IOException {
     StringBuilder builder = new StringBuilder();

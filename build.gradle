@@ -33,6 +33,8 @@ dependencies {
     implementation group: 'javax.json', name: 'javax.json-api', version: '1.0-b01'
     implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.1.3'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
 }
 
 test {

@@ -5,7 +5,6 @@ import static kr.nanoit.extension.Variable.CHARSET;
 import static kr.nanoit.extension.Variable.HEADER_CONTENT_TYPE;
 import static kr.nanoit.extension.Variable.STATUS_OK;
 
-import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.BufferedReader;
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import kr.nanoit.extension.RelatedBody;
-import kr.nanoit.user.UserService;
+import kr.nanoit.domain.UserService;
 
 
 /**
@@ -38,7 +37,7 @@ public final class GetUser {
       headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);
       exchange.sendResponseHeaders(STATUS_OK, 0);
       OutputStreamWriter outputStreamWriter = new OutputStreamWriter(exchange.getResponseBody(), CHARSET);
-      outputStreamWriter.write(userService.getUser().toString());
+      outputStreamWriter.write(userService.getUSer());
       outputStreamWriter.close();
     } catch (Exception e) {
       e.printStackTrace();

@@ -1,7 +1,4 @@
-package kr.nanoit.user;
-
-import lombok.Getter;
-import lombok.Setter;
+package kr.nanoit.domain;
 
 public class UserDto {
 

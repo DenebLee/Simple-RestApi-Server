@@ -1,7 +1,9 @@
 import kr.nanoit.SandBoxHttpServer;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -29,30 +31,30 @@ public class ConnectHttpServerTest {
 
     }
 
-@Test
+    @Test
     public void ConnectHttpServer() throws IOException {
-    HttpURLConnection conn;
+        HttpURLConnection conn;
         //given
-    final String connect = "http://localhost:8090/user";
-    URL url = new URL(connect);
+        final String connect = "http://localhost:8090/user";
+        URL url = new URL(connect);
 
 
         //when
-    conn = (HttpURLConnection) url.openConnection();
-    conn.getResponseCode();
-    conn.setRequestMethod("POST");
-    conn.setDoOutput(true);
-    conn.connect();
+        conn = (HttpURLConnection) url.openConnection();
+        conn.getResponseCode();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.connect();
 
 
         //then
-    // OutputStream outputStream = conn.getOutputStream();
-    PrintWriter printWriter = new PrintWriter(conn.getOutputStream());
-    String test = "안녕 서버야";
+        // OutputStream outputStream = conn.getOutputStream();
+        PrintWriter printWriter = new PrintWriter(conn.getOutputStream());
+        String test = "안녕 서버야";
 
-    printWriter.println(test);
-    printWriter.flush();
-    System.out.println("서버에 전달완료 ");
+        printWriter.println(test);
+        printWriter.flush();
+        System.out.println("서버에 전달완료 ");
     }
 
 }
