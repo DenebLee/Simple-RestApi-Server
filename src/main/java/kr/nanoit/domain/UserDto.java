@@ -3,13 +3,34 @@ package kr.nanoit.domain;
 public class UserDto {
 
     private String id;
+    private String username;
     private String password;
     private String email;
 
-    public UserDto(String id, String password, String email) {
+    public UserDto() {
+    }
+
+    public UserDto(String id, String username, String password, String email) {
         this.id = id;
+        this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -28,11 +49,8 @@ public class UserDto {
         this.email = email;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "{\"id\": " + id + ", \"email\": \""+ email+"\"}";
     }
 }

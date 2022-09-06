@@ -10,6 +10,10 @@ import static kr.nanoit.extension.Variable.METHOD_POST;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import kr.nanoit.db.DbUserService;
+import kr.nanoit.db.TestUserService;
+import kr.nanoit.db.UserService;
+
 import java.io.IOException;
 
 /**
@@ -17,13 +21,22 @@ import java.io.IOException;
  */
 public class UserHandler implements HttpHandler {
 
+  private final UserService userService;
+  private final GetUser getUser;
+
+  public UserHandler() {
+    this.userService = new TestUserService();
+//    this.userService = new DbUserService();
+    this.getUser = new GetUser(userService);
+  }
+
   @Override
   public void handle(HttpExchange exchange) {
     String method = exchange.getRequestMethod();
     if (METHOD_POST.equals(method)) {
       PostUser.handle(exchange);
     } else if (METHOD_GET.equals(method)) {
-      GetUser.handle(exchange);
+      getUser.handle(exchange);
     } else if (METHOD_PATCH.equals(method)) {
       PatchUser.handle(exchange);
     } else if (METHOD_DELETE.equals(method)) {

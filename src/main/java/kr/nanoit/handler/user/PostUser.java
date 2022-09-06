@@ -8,10 +8,13 @@ import static kr.nanoit.extension.Variable.STATUS_OK;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import kr.nanoit.domain.UserDto;
+import kr.nanoit.extension.QueryParsing;
 import kr.nanoit.extension.RelatedBody;
 
 
@@ -30,10 +33,25 @@ public final class PostUser {
       System.out.println(RelatedBody.parseBody(new BufferedReader(new InputStreamReader(inputStream, CHARSET))));
 
       // response
+      Map<String, List<String>> param = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
+      System.out.println(param);
+
+      UserDto userDto = new UserDto();
+      userDto.setId(param.get("id").get(0));
+      userDto.setPassword(param.get("password").toString());
+      userDto.setEmail(param.get("email").toString());
+
+
       Headers headers = exchange.getResponseHeaders();
       headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);
       exchange.sendResponseHeaders(STATUS_OK, 0);
+      OutputStream outputStream = exchange.getResponseBody();
+      outputStream.write(RelatedBody.makeBody().getBytes());
+      outputStream.flush();
 
+      OutputStreamWriter outputStreamWriter = new OutputStreamWriter(exchange.getResponseBody(), CHARSET);
+      outputStreamWriter.write(RelatedBody.makeBody());
+      outputStreamWriter.close();
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

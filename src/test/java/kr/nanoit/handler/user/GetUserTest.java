@@ -19,8 +19,10 @@ import java.security.SecureRandom;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("Post HANDLER 테스트")
-class PostUserTest {
+@DisplayName("GET HANDLER 테스트")
+class GetUserTest {
+
+    private HttpServer httpServer;
     private int port;
 
     @BeforeEach
@@ -32,12 +34,12 @@ class PostUserTest {
 
     @Test
     @DisplayName("User id = 1일때 테스트")
-    void should_post_user() throws IOException {
+    void should_get_when_id_1() throws IOException {
         // given
         int expected_id = 1;
 
         // when
-        Response actual = get("http://localhost:" + port + "/get" + expected_id);
+        Response actual = get("http://localhost:" + port + "/health?id=" + expected_id );
 
         // then
         assertThat(actual.code).isEqualTo(200);

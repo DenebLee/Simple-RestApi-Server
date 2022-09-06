@@ -17,13 +17,6 @@ public class SandBoxHttpServer {
     this.httpServer = HttpServer.create(new InetSocketAddress(host, port), 0);
     this.httpServer.createContext("/user", new UserHandler());
     this.httpServer.createContext("/health", new HealthHandler());
-
-
-    // PATH HANDLE
-//     http.handler(POST, "/user", new GetUserHandler());
-//     http.handler(GET, "/user", new GetUserHandler());
-//     http.handler(PATCH, "/user", new GetUserHandler());
-//     http.handler(DELETE, "/user", new GetUserHandler());
   }
 
   public void start() {
