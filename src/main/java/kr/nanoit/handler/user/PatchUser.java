@@ -3,7 +3,7 @@ package kr.nanoit.handler.user;
 import static kr.nanoit.extension.Variable.APPLICATION_JSON_CHARSET_UTF_8;
 import static kr.nanoit.extension.Variable.CHARSET;
 import static kr.nanoit.extension.Variable.HEADER_CONTENT_TYPE;
-import static kr.nanoit.extension.Variable.STATUS_OK;
+import static kr.nanoit.extension.Variable.HTTP_OK;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -30,10 +30,8 @@ public final class PatchUser {
       // response
       Headers headers = exchange.getResponseHeaders();
       headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);
-      exchange.sendResponseHeaders(STATUS_OK, 0);
-//      OutputStreamWriter outputStreamWriter = new OutputStreamWriter(exchange.getResponseBody(), CHARSET);
-//      outputStreamWriter.write(makeBody());
-//      outputStreamWriter.close();
+      exchange.sendResponseHeaders(HTTP_OK, 0);
+
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

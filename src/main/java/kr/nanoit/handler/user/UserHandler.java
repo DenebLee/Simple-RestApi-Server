@@ -10,7 +10,6 @@ import static kr.nanoit.extension.Variable.METHOD_POST;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import kr.nanoit.db.DbUserService;
 import kr.nanoit.db.TestUserService;
 import kr.nanoit.db.UserService;
 
@@ -23,11 +22,13 @@ public class UserHandler implements HttpHandler {
 
   private final UserService userService;
   private final GetUser getUser;
+  private final DeleteUser deleteUser;
 
   public UserHandler() {
     this.userService = new TestUserService();
 //    this.userService = new DbUserService();
     this.getUser = new GetUser(userService);
+    this.deleteUser = new DeleteUser(userService);
   }
 
   @Override
@@ -40,7 +41,7 @@ public class UserHandler implements HttpHandler {
     } else if (METHOD_PATCH.equals(method)) {
       PatchUser.handle(exchange);
     } else if (METHOD_DELETE.equals(method)) {
-      DeleteUser.handle(exchange);
+      deleteUser.handle(exchange);
     } else {
       badRequest(exchange);
     }

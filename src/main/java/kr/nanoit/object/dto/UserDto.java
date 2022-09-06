@@ -1,8 +1,10 @@
-package kr.nanoit.domain;
+package kr.nanoit.object.dto;
 
+// 외부 입력, 출력
+// HTTP INPUT 값으로 받을때 또는 RESPONSE로 줄때 DTO
 public class UserDto {
 
-    private String id;
+    private long id;
     private String username;
     private String password;
     private String email;
@@ -10,18 +12,18 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String id, String username, String password, String email) {
+    public UserDto(long id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -47,10 +49,5 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "{\"id\": " + id + ", \"email\": \""+ email+"\"}";
     }
 }

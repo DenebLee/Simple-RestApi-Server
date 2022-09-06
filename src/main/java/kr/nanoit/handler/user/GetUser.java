@@ -1,39 +1,27 @@
 package kr.nanoit.handler.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.UserService;
-import kr.nanoit.domain.UserDto;
 import kr.nanoit.extension.QueryParsing;
-import kr.nanoit.extension.RelatedBody;
+import kr.nanoit.object.dto.UserDto;
+import kr.nanoit.object.entity.UserEntity;
+import kr.nanoit.utils.Mapper;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static kr.nanoit.extension.Variable.*;
-
-/**
- * 클래스 한개는 하나의 일만 한다.
- * <p>
- * 1. 정의
- * <p>
- * 성공 EXAMPLE
- * GET /user?id=1
- * <p>
- * 실패 EXAMPLE
- * query id가 없는 경우 모두 실패
- */
+import static kr.nanoit.utils.HandlerUtil.print;
+import static kr.nanoit.utils.HandlerUtil.responseOk;
+import static kr.nanoit.utils.Validation.*;
 
 @Slf4j
 public class GetUser {
 
-    private final UserService userService;
+    private  UserService userService;
 
     public GetUser(UserService userService) {
         this.userService = userService;
@@ -45,59 +33,40 @@ public class GetUser {
 
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
             if (isInvalid(exchange, queryStrings)) return;
+            UserEntity userEntity = userService.findById(Integer.parseInt(queryStrings.get("id").get(0)));
+            UserDto userDto = userEntity.toDto();
+            if (isNull(exchange, userDto)) return;
 
-            UserDto userDto = userService.getUser(Integer.parseInt(queryStrings.get("id").get(0)));
-            if (userDto == null) {
-                badRequest(exchange);
-                return;
-            }
-
-            String raw = userDto.toString();
-            log.info("{}", raw);
-            responseOk(exchange, raw.getBytes(StandardCharsets.UTF_8));
+            responseOk(exchange, Mapper.writePretty(userDto).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("get handler error occurred", e);
+            internalServerError(exchange, "Unknown Error");
         } finally {
             exchange.close();
         }
     }
 
-    private void print(HttpExchange exchange) throws IOException {
-        InputStream inputStream = exchange.getRequestBody();
-        System.out.println(RelatedBody.parseBody(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))));
+    private boolean IsNotContainsJson(HttpExchange exchange) throws IOException {
+        if (exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE) && exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).size() > 0) {
+            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
+                return false;
+            }
+        }
+        badRequest(exchange, "not found: Content-Type Header");
+        return true;
     }
 
-    private void responseOk(HttpExchange exchange, byte[] rawBytes) throws IOException {
-        Headers headers = exchange.getResponseHeaders();
-        headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);
-        exchange.sendResponseHeaders(STATUS_OK, rawBytes.length);
-        OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write(rawBytes);
-        outputStream.flush();
-    }
-
-    private boolean isInvalid(HttpExchange exchange, Map<String, List<String>> queryStrings) throws IOException, JSONException {
-        for (Map.Entry<String, List<String>> stringListEntry : queryStrings.entrySet()) {
-            log.info("KEY={} VALUES={}", stringListEntry.getKey(), stringListEntry.getValue().stream().map(value -> "[" + value + "]").collect(Collectors.joining(",")));
-        }
-        if (!queryStrings.containsKey("id")) { // ID 가 없을때
-            badRequest(exchange);
+    private boolean isNull(HttpExchange exchange, UserDto userDto) throws IOException {
+        if (userDto == null) {
+            badRequest(exchange, "parse failed");
             return true;
         }
-
-        if (queryStrings.containsKey("id") && queryStrings.get("id").size() != 1) { // ID 가 있고 id size가 1이 아닐때
-            badRequest(exchange);
-            return true;
-        }
-
         return false;
     }
 
-    public void badRequest(HttpExchange exchange) throws IOException, JSONException {
-        exchange.sendResponseHeaders(STATUS_FAILD, -1);
-        byte[] bytesOfBody = BadRequestWord.getBytes(StandardCharsets.UTF_8);
-        OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write(bytesOfBody);
-        outputStream.flush();
-    }
+
+
+
+
+
 }

@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 
+
 public class QueryParsing {
 
     public static Map<String, List<String>> splitQuery(String query) {
@@ -29,4 +30,5 @@ public class QueryParsing {
             throw new RuntimeException("UTF-8 is a required encoding", e);
         }
     }
+
 }
