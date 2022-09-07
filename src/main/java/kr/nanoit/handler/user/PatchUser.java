@@ -1,41 +1,33 @@
 package kr.nanoit.handler.user;
 
-import static kr.nanoit.extension.Variable.APPLICATION_JSON_CHARSET_UTF_8;
-import static kr.nanoit.extension.Variable.CHARSET;
-import static kr.nanoit.extension.Variable.HEADER_CONTENT_TYPE;
-import static kr.nanoit.extension.Variable.HTTP_OK;
-
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import kr.nanoit.db.UserService;
+import kr.nanoit.object.dto.UserDto;
+import kr.nanoit.utils.Mapper;
+import lombok.extern.slf4j.Slf4j;
 
-import kr.nanoit.extension.RelatedBody;
+import static kr.nanoit.utils.Validation.internalServerError;
+import static kr.nanoit.utils.HandlerUtil.print;
 
-/**
- * 클래스 한개는 하나의 일만 한다.
- */
-public final class PatchUser {
+@Slf4j
+public class PatchUser {
 
-  private PatchUser() {
-  }
-
-  public static void handle(HttpExchange exchange) {
-    try {
-      // print
-      InputStream inputStream = exchange.getRequestBody();
-      System.out.println(RelatedBody.parseBody(new BufferedReader(new InputStreamReader(inputStream, CHARSET))));
-
-      // response
-      Headers headers = exchange.getResponseHeaders();
-      headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);
-      exchange.sendResponseHeaders(HTTP_OK, 0);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    } finally {
-      exchange.close();
+    private final UserService userService;
+    public PatchUser(UserService userService) {
+        this.userService = userService;
     }
-  }
+
+    public void handle(HttpExchange exchange) {
+        try {
+            print(exchange);
+            System.out.println( Mapper.read("json",UserDto.class));
+
+
+        } catch (Exception e) {
+            log.error("Patch handler error occurred", e);
+            internalServerError(exchange, "unknown Error");
+        } finally {
+            exchange.close();
+        }
+    }
 }

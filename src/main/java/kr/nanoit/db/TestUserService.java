@@ -1,11 +1,13 @@
 package kr.nanoit.db;
 
-import kr.nanoit.object.dto.UserDto;
-import kr.nanoit.exceptions.UserNotFoundException;
+import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.object.entity.UserEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static kr.nanoit.utils.HandlerUtil.*;
 
 public class TestUserService implements UserService {
 
@@ -13,6 +15,7 @@ public class TestUserService implements UserService {
 
     public TestUserService() {
         this.testUsers = new HashMap<>();
+        int max = 0;
         for (int i = 1; i <= 100; i++) {
             UserEntity userEntity = new UserEntity();
             userEntity.setId(i);
@@ -20,26 +23,38 @@ public class TestUserService implements UserService {
             userEntity.setPassword("TESTPASSWORD_" + i);
             userEntity.setEmail("testemail" + i + "@test.com");
             testUsers.put(i, userEntity);
+            if (i > max) {
+                max = i;
+            }
         }
     }
 
     @Override
     public UserEntity findById(int userId) {
-        if (testUsers.containsKey(userId)) {
             return testUsers.get(userId);
-        } else {
-            throw new UserNotFoundException("not found: user.id=" + userId);
-        }
     }
 
     @Override
     public boolean deleteById(int userId) {
-        return false;
+        if (testUsers.containsKey(userId)) {
+            testUsers.remove(userId);
+            return false;
+        }
+        return true;
     }
 
     @Override
     public UserEntity update(UserEntity userEntity) {
         return null;
+    }
+
+    @Override
+    public boolean isDuplication(HttpExchange exchange, int userId) throws IOException {
+        if (!testUsers.containsKey(userId)) {
+            badRequest(exchange, "userId is not Exist");
+            return true;
+        }
+        return false;
     }
 
     @Override
