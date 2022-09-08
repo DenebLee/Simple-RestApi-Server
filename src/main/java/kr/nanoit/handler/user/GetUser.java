@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.UserService;
 import kr.nanoit.extension.QueryParsing;
 import kr.nanoit.object.dto.UserDto;
-import kr.nanoit.object.entity.UserEntity;
 import kr.nanoit.utils.Mapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import static kr.nanoit.extension.Variable.*;
 import static kr.nanoit.utils.HandlerUtil.*;
 import static kr.nanoit.utils.Validation.*;
 
@@ -27,15 +27,36 @@ public class GetUser {
     public void handle(HttpExchange exchange) {
         try {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
-            if (isInvalid(exchange, queryStrings)) return;
 
-            int userId = Integer.parseInt(queryStrings.get("id").get(0));
-            System.out.println( Mapper.read("json",UserDto.class));
-            if(userService.isDuplication(exchange,userId))return;
-            UserEntity userEntity = userService.findById(userId);
-            UserDto userDto = userEntity.toDto();
+            if (!queryStrings.containsKey("id")) { // ID 가 없을때
+                notFound(exchange, "not found: query.id");
+                return;
+            }
 
-            if (isNull(exchange, userDto)) return;
+            if (queryStrings.containsKey("id") && queryStrings.get("id").size() != 1) { // ID 가 있고 id size가 1이 아닐때
+                badRequest(exchange, "invalid: query.id");
+                return;
+            }
+
+
+            int userId = Integer.parseInt((queryStrings.get("id").get(0)));
+
+            if (userId == 0) {
+                badRequest(exchange, "zero value: query.id");
+                return;
+            }
+
+            if (!userService.containsById(userId)) {
+                notFound(exchange, "not found: user.id");
+                return;
+            }
+
+            UserDto userDto = userService.findById(userId).toDto();
+
+            if (userDto == null) {
+                internalServerError(exchange, "get user query failed: user.id=" + userId);
+                return;
+            }
 
             responseOk(exchange, Mapper.writePretty(userDto).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
@@ -45,4 +66,6 @@ public class GetUser {
             exchange.close();
         }
     }
+
+
 }

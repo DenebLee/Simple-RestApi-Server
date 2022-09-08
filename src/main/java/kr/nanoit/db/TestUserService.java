@@ -1,21 +1,18 @@
 package kr.nanoit.db;
 
-import com.sun.net.httpserver.HttpExchange;
+import kr.nanoit.exceptions.UserNotFoundException;
 import kr.nanoit.object.entity.UserEntity;
+import kr.nanoit.utils.HandlerUtil;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static kr.nanoit.utils.HandlerUtil.*;
-
 public class TestUserService implements UserService {
 
-    private final Map<Integer, UserEntity> testUsers;
+    public static  Map<Integer, UserEntity> testUsers;
 
     public TestUserService() {
-        this.testUsers = new HashMap<>();
-        int max = 0;
+        testUsers = new HashMap<>();
         for (int i = 1; i <= 100; i++) {
             UserEntity userEntity = new UserEntity();
             userEntity.setId(i);
@@ -23,24 +20,18 @@ public class TestUserService implements UserService {
             userEntity.setPassword("TESTPASSWORD_" + i);
             userEntity.setEmail("testemail" + i + "@test.com");
             testUsers.put(i, userEntity);
-            if (i > max) {
-                max = i;
-            }
         }
     }
 
     @Override
     public UserEntity findById(int userId) {
-            return testUsers.get(userId);
+       return testUsers.get(userId);
     }
 
     @Override
     public boolean deleteById(int userId) {
-        if (testUsers.containsKey(userId)) {
             testUsers.remove(userId);
-            return false;
-        }
-        return true;
+            return true;
     }
 
     @Override
@@ -49,16 +40,22 @@ public class TestUserService implements UserService {
     }
 
     @Override
-    public boolean isDuplication(HttpExchange exchange, int userId) throws IOException {
-        if (!testUsers.containsKey(userId)) {
-            badRequest(exchange, "userId is not Exist");
-            return true;
-        }
-        return false;
+    public boolean containsById(int id) {
+        return testUsers.containsKey(id);
     }
 
     @Override
     public UserEntity save(UserEntity userDto) {
-        return null;
+        int max = 0;
+        // 5, 8, 1, 3
+        for (Map.Entry<Integer, UserEntity> entry : testUsers.entrySet()) {
+            int current = entry.getKey();
+            if (current > max){
+                max = current;
+            }
+
+        }
+        userDto.setId(max);
+        return testUsers.put(max, userDto);
     }
 }

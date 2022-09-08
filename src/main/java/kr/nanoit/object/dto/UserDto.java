@@ -1,5 +1,7 @@
 package kr.nanoit.object.dto;
 
+import kr.nanoit.object.entity.UserEntity;
+
 // 외부 입력, 출력
 // HTTP INPUT 값으로 받을때 또는 RESPONSE로 줄때 DTO
 public class UserDto {
@@ -49,5 +51,19 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
+    public UserEntity toEntity() {
+        return new UserEntity(0, username, password, email);
     }
 }
