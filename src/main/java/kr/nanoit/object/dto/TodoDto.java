@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class HttpResponse {
-    private String timestamp;
-    private int code;
-    private String error;
-    private String message;
+@AllArgsConstructor
+public class TodoDto {
+    private long todoId;
+    private String createdAt;
+    private String deletedAt;
+    private String content;
 }

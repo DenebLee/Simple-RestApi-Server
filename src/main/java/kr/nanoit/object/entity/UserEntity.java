@@ -5,7 +5,7 @@ import kr.nanoit.object.dto.UserDto;
 // DB 스키마를 CLASS 객체로 옮긴것
 public class UserEntity {
 
-    private long id; // int, bigint, long, short
+    private long id;
     private String username;
     private String password;
     private String email;
@@ -54,5 +54,15 @@ public class UserEntity {
 
     public UserDto toDto() {
         return new UserDto(id, username, password, email);
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

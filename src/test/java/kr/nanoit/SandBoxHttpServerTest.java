@@ -1,5 +1,7 @@
 package kr.nanoit;
 
+import kr.nanoit.db.UserService;
+import kr.nanoit.db.UserServiceTestImpl;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -31,7 +33,8 @@ class SandBoxHttpServerTest {
     @DisplayName("HTTP 서버가 켜져 있는지 테스트")
     void should_created_http_server() throws IOException {
         // given
-        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port);
+        UserService userService = new UserServiceTestImpl();
+        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port, userService);
         expected.start();
 
         // when

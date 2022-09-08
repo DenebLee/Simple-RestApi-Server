@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-import static kr.nanoit.extension.Variable.*;
+import static kr.nanoit.utils.GlobalVariable.*;
 
 public class HealthHandler implements HttpHandler {
 

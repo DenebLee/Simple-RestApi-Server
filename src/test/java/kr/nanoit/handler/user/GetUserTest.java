@@ -1,6 +1,9 @@
 package kr.nanoit.handler.user;
 
 import kr.nanoit.SandBoxHttpServer;
+import kr.nanoit.db.UserService;
+import kr.nanoit.db.UserServiceTestImpl;
+import kr.nanoit.object.entity.UserEntity;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -22,27 +25,88 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("GET HANDLER 테스트")
 class GetUserTest {
 
-    private HttpServer httpServer;
+    private SandBoxHttpServer httpServer;
+    private UserService userService;
     private int port;
 
+    // 테스트 메소드 한개당 새롭게 실행됨
     @BeforeEach
     void setUp() throws IOException {
         port = getRandomPort();
-        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port);
-        expected.start();
+        userService = new UserServiceTestImpl();
+        httpServer = new SandBoxHttpServer("localhost", port, userService);
+        httpServer.start();
     }
 
     @Test
-    @DisplayName("User id = 1일때 테스트")
-    void should_get_when_id_1() throws IOException {
+    @DisplayName("GET /user (쿼리 스트링이 NULL) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    void should_return_bad_request_when_null_query_string() throws IOException {
         // given
-        int expected_id = 1;
+        String url = "http://localhost:" + port + "/user";
 
         // when
-        Response actual = get("http://localhost:" + port + "/health?id=" + expected_id );
+        Response actual = get(url);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("null: query.id");
+    }
+
+    @Test
+    @DisplayName("GET /user (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    void should_return_bad_request_when_many_query_string() throws IOException {
+        // given
+        String url = "http://localhost:" + port + "/user?id=1&id=4";
+
+        // when
+        Response actual = get(url);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("invalid: query.id");
+    }
+
+    @Test
+    @DisplayName("GET /user (쿼리 스트링 ID가 -1일때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    void should_return_bad_request_when_query_string_is_minus() throws IOException {
+        // given
+        String url = "http://localhost:" + port + "/user?id=-1";
+
+        // when
+        Response actual = get(url);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("zero value: query.id");
+    }
+
+    @Test
+    @DisplayName("GET /user?id=1 (유저가 NOT FOUND) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    void should_return_bad_request_when_user_not_found() throws IOException {
+        // given
+        String url = "http://localhost:" + port + "/user?id=1";
+
+        // when
+        Response actual = get(url);
+
+        // then
+        assertThat(actual.code).isEqualTo(404);
+        assertThat(actual.body).contains("not found: user.id");
+    }
+
+    @Test
+    @DisplayName("GET /user?id=1 로 요청했을때 OK, USER 가 내려와야 됨")
+    void should_return_ok_when_user() throws IOException {
+        // given
+        UserEntity user = userService.save(new UserEntity(0, "test01", "123123", "test@test.com"));
+        String url = "http://localhost:" + port + "/user?id=1";
+
+        // when
+        Response actual = get(url);
 
         // then
         assertThat(actual.code).isEqualTo(200);
+        assertThat(actual.body).contains("test01", "123123", "test@test.com");
     }
 
     private Response get(String uri) throws IOException {

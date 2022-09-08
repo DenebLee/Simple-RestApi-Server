@@ -1,4 +1,4 @@
-package kr.nanoit.extension;
+package kr.nanoit.handler.common;
 
 
 import java.io.UnsupportedEncodingException;
@@ -13,15 +13,10 @@ import static java.util.stream.Collectors.*;
 
 
 public class QueryParsing {
-
     public static Map<String, List<String>> splitQuery(String query) {
         if (query == null || "".equals(query)) {
             return Collections.emptyMap();
         }
-
-        // List<String[]>
-        //
-
         return Pattern.compile("&")
                 .splitAsStream(query)
                 .map(eachQueryValue -> Arrays.copyOf(eachQueryValue.split("="), 2))

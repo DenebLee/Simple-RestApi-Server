@@ -4,16 +4,16 @@ import kr.nanoit.object.entity.UserEntity;
 
 public interface UserService {
     static UserService createTest() {
-        return new TestUserService();
+        return new UserServiceTestImpl();
     }
 
-    UserEntity save(UserEntity userDto);
+    UserEntity save(UserEntity userEntity);
 
-    UserEntity findById(int userId);
+    UserEntity findById(long userId);
 
-    boolean deleteById(int userId);
+    boolean deleteById(long userId);
 
     UserEntity update(UserEntity userEntity);
 
-    boolean containsById(int id);
+    boolean containsById(long id);
 }

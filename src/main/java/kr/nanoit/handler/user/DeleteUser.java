@@ -2,8 +2,8 @@ package kr.nanoit.handler.user;
 
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.UserService;
-import kr.nanoit.extension.QueryParsing;
-import kr.nanoit.object.dto.HttpResponse;
+import kr.nanoit.handler.common.QueryParsing;
+import kr.nanoit.object.dto.HttpResponseDto;
 import kr.nanoit.utils.Mapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,9 +12,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static kr.nanoit.extension.Variable.*;
-import static kr.nanoit.utils.HandlerUtil.*;
-import static kr.nanoit.utils.Validation.internalServerError;
+import static kr.nanoit.utils.GlobalVariable.*;
+import static kr.nanoit.handler.common.HandlerUtil.*;
+import static kr.nanoit.handler.common.Validation.internalServerError;
 
 
 @Slf4j
@@ -54,7 +54,7 @@ public final class DeleteUser {
             boolean isSuccess = userService.deleteById(userId);
 
             if (isSuccess) {
-                responseOk(exchange, Mapper.writePretty(new HttpResponse(OffsetDateTime.now().toString(), HTTP_OK, null, "OK")).getBytes(StandardCharsets.UTF_8));
+                responseOk(exchange, Mapper.writePretty(new HttpResponseDto(OffsetDateTime.now().toString(), HTTP_OK, null, "OK")).getBytes(StandardCharsets.UTF_8));
             } else {
                 internalServerError(exchange, "delete fail: user.id=" + userId);
             }

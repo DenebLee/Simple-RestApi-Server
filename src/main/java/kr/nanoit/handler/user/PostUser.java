@@ -7,14 +7,16 @@ import kr.nanoit.db.UserService;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.object.entity.UserEntity;
 import kr.nanoit.utils.Mapper;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
-import static kr.nanoit.extension.Variable.HEADER_CONTENT_TYPE;
-import static kr.nanoit.utils.HandlerUtil.badRequest;
-import static kr.nanoit.utils.Validation.*;
+import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
+import static kr.nanoit.handler.common.HandlerUtil.badRequest;
+import static kr.nanoit.handler.common.HandlerUtil.responseOk;
 
-
+@Slf4j
 public final class PostUser {
 
     private final UserService userService;
@@ -65,11 +67,9 @@ public final class PostUser {
 
             UserEntity userEntity = userService.save(userDto.toEntity());
 
-            if (userEntity == null) {
-                internalServerError(exchange, "save query failed");
-                return;
-            }
 
+            responseOk(exchange, Mapper.writePretty(userEntity).getBytes(StandardCharsets.UTF_8));
+            log.info(Mapper.writePretty(userEntity));
 
         } catch (Exception e) {
             e.printStackTrace();
