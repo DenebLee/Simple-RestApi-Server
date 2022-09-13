@@ -20,11 +20,11 @@ public class UserEntity {
         this.email = email;
     }
 
-    public long getId() {
+    public long getUserId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setUserId(long id) {
         this.id = id;
     }
 

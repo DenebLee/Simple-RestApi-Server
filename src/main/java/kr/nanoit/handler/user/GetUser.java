@@ -27,12 +27,12 @@ public class GetUser {
         try {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
 
-            if (!queryStrings.containsKey("id")) { // ID 가 없을때
+            if (!queryStrings.containsKey("id")) {
                 badRequest(exchange, "null: query.id");
                 return;
             }
 
-            if (queryStrings.get("id").size() != 1) { // ID 가 있고 id size가 1이 아닐때
+            if (queryStrings.get("id").size() != 1) {
                 badRequest(exchange, "invalid: query.id");
                 return;
             }

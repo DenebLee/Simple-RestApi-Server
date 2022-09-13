@@ -29,6 +29,7 @@ public final class DeleteUser {
     public void handle(HttpExchange exchange) {
         try {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
+
             if (!queryStrings.containsKey("id")) {
                 notFound(exchange, "not found: query.id");
                 return;

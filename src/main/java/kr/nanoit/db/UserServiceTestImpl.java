@@ -29,8 +29,7 @@ public class UserServiceTestImpl implements UserService {
 
     @Override
     public UserEntity update(UserEntity userEntity) {
-//        int userId = (int) userEntity.getId();
-        return users.put(userEntity.getId(), userEntity);
+        return users.put(userEntity.getUserId(), userEntity);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class UserServiceTestImpl implements UserService {
             return null;
         }
         long key = userId.incrementAndGet();
-        userEntity.setId(key);
+        userEntity.setUserId(key);
         users.put(key, userEntity);
         return users.get(key);
     }

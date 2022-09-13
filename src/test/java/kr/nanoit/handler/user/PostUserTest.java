@@ -1,0 +1,213 @@
+package kr.nanoit.handler.user;
+
+
+import kr.nanoit.SandBoxHttpServer;
+import kr.nanoit.db.UserService;
+import kr.nanoit.db.UserServiceTestImpl;
+import kr.nanoit.object.dto.UserDto;
+import kr.nanoit.object.entity.UserEntity;
+import lombok.Getter;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DisplayName("GET HANDLER 테스트")
+class PostUserTest {
+
+    private SandBoxHttpServer httpServer;
+    private UserService userService;
+    private int port;
+
+    private String defaultContentType = "content-type";
+    private String defailtContentValue = "application/json";
+
+    // 테스트 메소드 한개당 새롭게 실행됨
+    @BeforeEach
+    void setUp() throws IOException {
+        port = getRandomPort();
+        userService = new UserServiceTestImpl();
+        httpServer = new SandBoxHttpServer("localhost", port, userService);
+        httpServer.start();
+    }
+
+    @Test
+    @DisplayName("POST / header = content type 을 요청했을때 올바르지 않으면 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_uncorrected_content_type_header() throws IOException {
+        // given
+        String contentType = "xontent-type";
+        String headerValue = "application/json";
+        String url = "http://localhost:" + port + "/user";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.header).isNotEqualTo(contentType);
+        assertThat(actual.body).contains("not found: Content-Type Header");
+    }
+
+//    @Test
+//    @DisplayName("POST / header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
+//    void should_return_bad_request_when_empty_content_type_header() throws IOException {
+//        // given
+//        String contentType = "";
+//        String headerValue = "";
+//        String url = "http://localhost:" + port + "/user";
+//
+//        // when
+//        Response actual = post(url, contentType, headerValue);
+//
+//        // then
+//        assertThat(actual.code).isEqualTo(400);
+//        assertThat(actual.header).isNullOrEmpty();
+//        assertThat(actual.body).contains("invalid: Content-Type Header");
+//    }
+
+    @Test
+    @DisplayName("POST / header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_empty_content_type_header() throws IOException {
+        // given
+        String contentType = "content-type";
+        String headerValue = "application/xml";
+        String url = "http://localhost:" + port + "/user";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("not found: Content-Type Header");
+    }
+
+    @Test
+    @DisplayName("POST / userName이 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_userdto_isnull() throws IOException {
+        // given
+        String contentType = "content-type";
+        String headerValue = "application/json";
+        UserDto userDto = new UserDto(0, null, null, null);
+        String url = "http://localhost:" + port + "/user";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+        userService.save(userDto.toEntity());
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("parse failed");
+    }
+
+    @Test
+    @DisplayName("POST / userPassword가 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_userdto_isnull() throws IOException {
+        // given
+        String contentType = "content-type";
+        String headerValue = "application/json";
+        UserDto userDto = new UserDto(0, null, null, null);
+        String url = "http://localhost:" + port + "/user";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+        userService.save(userDto.toEntity());
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("parse failed");
+    }
+
+    @Test
+    @DisplayName("POST / userEmail이 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_userdto_isnull() throws IOException {
+        // given
+        String contentType = "content-type";
+        String headerValue = "application/json";
+        UserDto userDto = new UserDto(0, null, null, null);
+        String url = "http://localhost:" + port + "/user";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+        userService.save(userDto.toEntity());
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("parse failed");
+    }
+
+    @Test
+    @DisplayName("POST / UserDto가 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_userdto_isnull() throws IOException {
+        // given
+        String contentType = "content-type";
+        String headerValue = "application/json";
+        UserDto userDto = new UserDto(0, null, null, null);
+        String url = "http://localhost:" + port + "/user";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+        userService.save(userDto.toEntity());
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("parse failed");
+    }
+
+
+
+    @Test
+    @DisplayName("POST /user?id=1 로 요청했을때 OK, USER 가 내려와야 됨")
+    void should_return_ok_when_user() throws IOException {
+        // given
+        UserEntity user = userService.save(new UserEntity(0, "test01", "123123", "test@test.com"));
+        String url = "http://localhost:" + port + "/user?id=1";
+
+        // when
+//        Response actual = post(url);/
+//        // then
+//        assertThat(actual.code).isEqualTo(200);
+//        assertThat(actual.body).contains("test01", "123123", "test@test.com");
+    }
+
+    private Response post(String uri, String contentType, String value) throws IOException {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(uri);
+            httpPost.addHeader(contentType, value);
+            try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
+                return new Response(response.getCode(), Arrays.toString(response.getHeaders()), EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private int getRandomPort() {
+        return new SecureRandom().nextInt(64511) + 1024;
+    }
+
+    @Getter
+    static class Response {
+        private int code;
+        private String header;
+        private String body;
+
+        public Response(int code, String header, String body) {
+            this.code = code;
+            this.header = header;
+            this.body = body;
+        }
+    }
+}

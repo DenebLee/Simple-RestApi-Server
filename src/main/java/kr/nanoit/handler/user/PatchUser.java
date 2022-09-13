@@ -45,6 +45,7 @@ public void handle(HttpExchange exchange) throws IOException {
 
             String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));
             UserDto userDto = getRead(body);
+            log.info(String.valueOf(userDto));
 
             if (userDto == null) {
                 badRequest(exchange, "parse failed");
@@ -72,7 +73,6 @@ public void handle(HttpExchange exchange) throws IOException {
             }
 
             UserEntity userEntity = userService.update(userDto.toEntity());
-            log.info("userEntity : {} ", userEntity);
 
             if(userEntity == null){
                 internalServerError(exchange, "update query failed");
