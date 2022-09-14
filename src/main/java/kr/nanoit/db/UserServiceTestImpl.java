@@ -28,7 +28,9 @@ public class UserServiceTestImpl implements UserService {
 
     @Override
     public UserEntity update(UserEntity userEntity) {
-        return users.put(userEntity.getId(), userEntity);
+        long key = userEntity.getId();
+        users.put(key,userEntity);
+        return users.get(key);
     }
 
     @Override

@@ -4,6 +4,7 @@ import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.UserService;
 import kr.nanoit.db.UserServiceTestImpl;
 import kr.nanoit.object.dto.UserDto;
+import kr.nanoit.object.entity.UserEntity;
 import kr.nanoit.utils.Mapper;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
@@ -98,7 +99,7 @@ class PatchUserTest {
         StringEntity stringEntity = new StringEntity(json);
 
         // when
-        Response actual = patchjson(url, stringEntity);
+        Response actual = patchJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -114,7 +115,7 @@ class PatchUserTest {
         StringEntity stringEntity = new StringEntity(json);
 
         // when
-        Response actual = patchjson(url, stringEntity);
+        Response actual = patchJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -130,7 +131,7 @@ class PatchUserTest {
         StringEntity stringEntity = new StringEntity(json);
 
         // when
-        Response actual = patchjson(url, stringEntity);
+        Response actual = patchJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -146,7 +147,7 @@ class PatchUserTest {
         StringEntity stringEntity = new StringEntity(json);
 
         // when
-        Response actual = patchjson(url, stringEntity);
+        Response actual = patchJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -162,7 +163,7 @@ class PatchUserTest {
         StringEntity stringEntity = new StringEntity(json);
 
         // when
-        Response actual = patchjson(url, stringEntity);
+        Response actual = patchJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -173,15 +174,19 @@ class PatchUserTest {
     @DisplayName("[PATCH /user] 유저 정보 수정 요청을 했을때 정상이면 요청했던 USER 정보가 내려와야 됨")
     void should_return_ok_when_user_patch() throws IOException {
         // given
-        UserDto expected = new UserDto(0,"lee", "123123", "test@test.com");
+        UserEntity originalUserData = userService.save(new UserEntity(0, "test01", "123123", "test01@test.com"));
+        UserDto expected = new UserDto(1, "leejeongseob", "123123", "test@test.com");
         String url = "http://localhost:" + port + "/user";
 
         // when
-        Response actual = patchjson(url, new StringEntity((Mapper.write(expected))));
+        Response actual = patchJson(url, new StringEntity((Mapper.write(expected))));
         userService.update(expected.toEntity());
 
         // then
-//        assertThat()
+        assertThat(actual.code).isEqualTo(200);
+        assertThat(Mapper.read(actual.body, UserDto.class))
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
 
@@ -199,10 +204,7 @@ class PatchUserTest {
         }
     }
 
-    @Test
-    @DisplayName("")
-
-    private Response patchjson(String uri, StringEntity stringEntity) throws IOException {
+    private Response patchJson(String uri, StringEntity stringEntity) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPatch httpPatch = new HttpPatch(uri);
             httpPatch.setEntity(stringEntity);
