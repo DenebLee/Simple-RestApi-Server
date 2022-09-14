@@ -2,7 +2,6 @@ package kr.nanoit.db;
 
 import kr.nanoit.object.entity.UserEntity;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,7 +28,7 @@ public class UserServiceTestImpl implements UserService {
 
     @Override
     public UserEntity update(UserEntity userEntity) {
-        return users.put(userEntity.getUserId(), userEntity);
+        return users.put(userEntity.getId(), userEntity);
     }
 
     @Override
@@ -43,7 +42,7 @@ public class UserServiceTestImpl implements UserService {
             return null;
         }
         long key = userId.incrementAndGet();
-        userEntity.setUserId(key);
+        userEntity.setId(key);
         users.put(key, userEntity);
         return users.get(key);
     }

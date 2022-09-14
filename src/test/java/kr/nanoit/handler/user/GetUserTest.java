@@ -10,7 +10,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +19,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("GET HANDLER 테스트")
+@DisplayName("GET /user 테스트")
 class GetUserTest {
 
     private SandBoxHttpServer httpServer;
@@ -53,7 +52,7 @@ class GetUserTest {
     }
 
     @Test
-    @DisplayName("GET /user (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("GET /user?id=1&id=4 (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_many_query_string() throws IOException {
         // given
         String url = "http://localhost:" + port + "/user?id=1&id=4";
@@ -90,7 +89,7 @@ class GetUserTest {
         Response actual = get(url);
 
         // then
-        assertThat(actual.code).isEqualTo(404);
+        assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("not found: user.id");
     }
 

@@ -7,7 +7,6 @@ import kr.nanoit.object.entity.UserEntity;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -23,7 +22,7 @@ import java.security.SecureRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Delete HANDLER 테스트")
+@DisplayName("DELETE /user 테스트")
 @Slf4j
 class DeleteUserTest {
 
@@ -40,6 +39,10 @@ class DeleteUserTest {
         httpServer.start();
     }
 
+
+
+
+
     @Test
     @DisplayName("Delete /user (쿼리 스트링이 NULL) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_null_query_string() throws IOException {
@@ -51,7 +54,7 @@ class DeleteUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("null: query.id");
+        assertThat(actual.body).contains("not found: query.id");
     }
 
     @Test
@@ -93,7 +96,7 @@ class DeleteUserTest {
         Response actual = delete(url);
 
         // then
-        assertThat(actual.code).isEqualTo(404);
+        assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("not found: user.id");
     }
 
@@ -107,11 +110,11 @@ class DeleteUserTest {
 
         // when
         Response responseActual = delete(url);
-        boolean actual = userService.deleteById(expected.getUserId());
+        boolean actual = userService.deleteById(expected.getId());
         // then
 
         assertThat(actual).isTrue(); 
-        assertThat(userService.findById(expected.getUserId())).isNull();
+        assertThat(userService.findById(expected.getId())).isNull();
         assertThat(responseActual.code).isEqualTo(200);
         assertThat(responseActual.body).contains("OK");
    }

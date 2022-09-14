@@ -31,7 +31,7 @@ public final class DeleteUser {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
 
             if (!queryStrings.containsKey("id")) {
-                notFound(exchange, "not found: query.id");
+                badRequest(exchange, "not found: query.id");
                 return;
             }
 
@@ -42,13 +42,13 @@ public final class DeleteUser {
 
             int userId = Integer.parseInt((queryStrings.get("id").get(0)));
 
-            if (userId == 0) {
+            if (userId <= 0) {
                 badRequest(exchange, "zero value: query.id");
                 return;
             }
 
             if (!userService.containsById(userId)) {
-                notFound(exchange, "not found: user.id");
+                badRequest(exchange, "not found: user.id");
                 return;
             }
 

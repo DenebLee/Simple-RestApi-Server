@@ -39,7 +39,7 @@ public void handle(HttpExchange exchange) throws IOException {
             }
 
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                badRequest(exchange, "not found: Content-Type Header");
+                badRequest(exchange, "accept Content-Type: application/json");
                 return;
             }
 
@@ -53,22 +53,22 @@ public void handle(HttpExchange exchange) throws IOException {
             }
 
             if (userDto.getId() == 0) {
-                badRequest(exchange,"You have Missing value userid , Request again in the form of id, username, password and email");
+                badRequest(exchange,"not found: user.id");
                 return;
             }
 
             if(userDto.getUsername() == null){
-                badRequest(exchange,"You have Missing value username , Request again in the form of id, username, password, and email" );
+                badRequest(exchange,"not found: user.username" );
                 return;
             }
 
             if(userDto.getPassword() == null){
-                badRequest(exchange,"You have Missing value username , Request again in the form of id, username, password, and email" );
+                badRequest(exchange,"not found: user.password" );
                 return;
             }
 
             if(userDto.getEmail() == null){
-                badRequest(exchange,"You have Missing value username , Request again in the form of id, username, password, and email" );
+                badRequest(exchange,"not found: user.email" );
                 return;
             }
 
@@ -81,7 +81,8 @@ public void handle(HttpExchange exchange) throws IOException {
             responseOk(exchange, Mapper.writePretty(userEntity).getBytes(StandardCharsets.UTF_8));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("patch handler error occurred", e);
+            internalServerError(exchange, "Unknown Error");
         } finally {
             exchange.close();
         }

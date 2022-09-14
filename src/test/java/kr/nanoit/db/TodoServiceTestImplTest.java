@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("TodoService 테스트")
 class TodoServiceTestImplTest {
 
     @Test

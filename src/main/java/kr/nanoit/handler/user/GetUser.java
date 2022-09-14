@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.UserService;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.object.dto.UserDto;
+import kr.nanoit.utils.ExchangeRawPrinter;
 import kr.nanoit.utils.Mapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +26,8 @@ public class GetUser {
 
     public void handle(HttpExchange exchange) {
         try {
+            ExchangeRawPrinter.print(exchange);
+
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
 
             if (!queryStrings.containsKey("id")) {
@@ -45,7 +48,7 @@ public class GetUser {
             }
 
             if (!userService.containsById(userId)) {
-                notFound(exchange, "not found: user.id");
+                badRequest(exchange, "not found: user.id");
                 return;
             }
 

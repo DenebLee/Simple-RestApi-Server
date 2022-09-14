@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.nanoit.object.dto.UserDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Jackson ObjectMapper 테스트")
 class MapperTest {
 
     @Test

@@ -12,9 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
 import static kr.nanoit.handler.common.HandlerUtil.badRequest;
 import static kr.nanoit.handler.common.HandlerUtil.responseOk;
+import static kr.nanoit.handler.common.Validation.internalServerError;
+import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
 
 @Slf4j
 public final class PostUser {
@@ -28,6 +29,9 @@ public final class PostUser {
 
     public void handle(HttpExchange exchange) {
         try {
+            // debugging
+//            String body = ExchangeRawPrinter.print(exchange);
+
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
                 badRequest(exchange, "not found: Content-Type Header");
                 return;
@@ -39,7 +43,7 @@ public final class PostUser {
             }
 
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                badRequest(exchange, "not found: Content-Type Header");
+                badRequest(exchange, "accept Content-Type: application/json");
                 return;
             }
 
@@ -51,28 +55,27 @@ public final class PostUser {
             }
 
             if (userDto.getUsername() == null) {
-                badRequest(exchange, "You have Missing value username , Request again in the form of id, username, password, and email");
+                badRequest(exchange, "not found: user.username");
                 return;
             }
 
             if (userDto.getPassword() == null) {
-                badRequest(exchange, "You have Missing value password , Request again in the form of id, username, password, and email");
+                badRequest(exchange, "not found: user.password");
                 return;
             }
 
             if (userDto.getEmail() == null) {
-                badRequest(exchange, "You have Missing value email , Request again in the form of id, username, password, and email");
+                badRequest(exchange, "not found: user.email");
                 return;
             }
 
             UserEntity userEntity = userService.save(userDto.toEntity());
 
-
-            responseOk(exchange, Mapper.writePretty(userEntity).getBytes(StandardCharsets.UTF_8));
-            log.info(Mapper.writePretty(userEntity));
+            responseOk(exchange, Mapper.writePretty(userEntity.toDto()).getBytes(StandardCharsets.UTF_8));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("POST /user handler error occurred", e);
+            internalServerError(exchange, "Unknown Error");
         } finally {
             exchange.close();
         }
@@ -82,6 +85,7 @@ public final class PostUser {
         try {
             return Mapper.read(body, UserDto.class);
         } catch (Exception e) {
+            log.error("Json Read error", e);
             return null;
         }
     }
