@@ -1,6 +1,5 @@
 package kr.nanoit.object.entity;
 
-import kr.nanoit.object.dto.UserDto;
 import lombok.*;
 
 @Getter
@@ -13,8 +12,13 @@ public class TodoEntity {
     private String createdAt;
     private String deletedAt;
     private String content;
-
-    public UserDto toDto() {
-        return new UserDto(todoId, createdAt, deletedAt, content);
-    }
 }
+
+////////////////////////////////
+// CREATE TABLE todo (
+//    id        BIGSERIAL PRIMARY KEY,
+//    createdAt TIMESTAMP,
+//    deletedAt TIMESTAMP,
+//    content   VARCHAR(512)
+// )
+////////////////////////////////

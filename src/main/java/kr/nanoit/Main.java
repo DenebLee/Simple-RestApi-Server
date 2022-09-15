@@ -1,7 +1,6 @@
 package kr.nanoit;
 
 import kr.nanoit.db.UserService;
-import kr.nanoit.db.UserServiceTestImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -13,7 +12,9 @@ public class Main {
     private static final int PORT = 7000;
 
     public static void main(String[] args) throws IOException {
-        UserService userService = new UserServiceTestImpl();
+        UserService userService = UserService.createTest();
+//        DataBaseConfig dataBaseConfig = new DataBaseConfig();
+//        UserService userService = UserService.createPostgreSQL(dataBaseConfig);
 
         log.info("[API SERVER START]");
 

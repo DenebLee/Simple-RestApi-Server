@@ -2,7 +2,7 @@ package kr.nanoit.handler.user;
 
 import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.UserService;
-import kr.nanoit.db.UserServiceTestImpl;
+import kr.nanoit.db.impl.UserServiceTestImpl;
 import kr.nanoit.object.entity.UserEntity;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

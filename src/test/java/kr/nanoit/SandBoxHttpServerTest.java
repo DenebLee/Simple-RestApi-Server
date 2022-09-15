@@ -1,7 +1,7 @@
 package kr.nanoit;
 
 import kr.nanoit.db.UserService;
-import kr.nanoit.db.UserServiceTestImpl;
+import kr.nanoit.db.impl.UserServiceTestImpl;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
