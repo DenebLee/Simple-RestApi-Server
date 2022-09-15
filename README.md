@@ -1,11 +1,11 @@
 # History
 ## TODO
-- UserService.class 테스트 코드 작성 및 내부 코드 수정
-- PostHandler.class 테스트 코드 작성
-- PatchHandler.class 테스트 코드 작성
-- DeleteHandler.class 테스트 코드 작성
+- UserService.class 테스트 코드 작성 및 내부 코드 수정 ✔
+- PostHandler.class 테스트 코드 작성 ✔
+- PatchHandler.class 테스트 코드 작성 ✔
+- DeleteHandler.class 테스트 코드 작성 ✔
 
-- TodoHandler 시작
+- TodoHandler 시작 ✔
 - DataBase 저장 시작
 
 ### COMMIT
@@ -17,3 +17,8 @@
 - @GET,@POST,@DELETE,@PATCH Handler 생성
 - @GET Handler 최적화 및 생성 
 - Refactoring
+#### 2022-09-14
+- @GET,@POST,@DELETE,@PATCH TestHandler 코드 작성 완료 
+- UserTest 
+- UserServiceTestImpl 테스트 코드 작성 완료 
+- TODO 작업 시작
