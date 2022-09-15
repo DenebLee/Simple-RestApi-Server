@@ -27,21 +27,27 @@ public class GetTodo {
 
             if (!queryString.containsKey("id")) {
                 badRequest(exchange, "null: query.id");
+                return;
             }
 
             if (queryString.get("id").size() != 1) {
                 badRequest(exchange, "invalid: query.id");
+                return;
             }
 
             int todoUserId = Integer.parseInt(queryString.get("id").get(0));
 
             if (todoUserId <= 0) {
                 badRequest(exchange, "zero value: query.id");
+                return;
             }
 
             if (!todoService.containsById(todoUserId)) {
                 badRequest(exchange, "not found: user.id");
+                return;
             }
+
+//            TodoDto todoDto = todoService.findById(todoUserId;
 
         } catch (Exception e) {
             log.error("Get handler error", e);
