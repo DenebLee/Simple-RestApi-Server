@@ -28,6 +28,13 @@ class PostgreSqlDbcpTest {
         assertThatCode(() -> {
             new PostgreSqlDbcp(getDataBaseConfig());
         }).doesNotThrowAnyException();
+
+
+    }
+    @Test
+    @DisplayName("DBCP가 DataBase에 연결되는지 확인")
+    void shoud_connect_db(){
+
     }
 
     private static DataBaseConfig getDataBaseConfig() {

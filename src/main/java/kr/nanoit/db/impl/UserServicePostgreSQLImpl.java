@@ -3,26 +3,48 @@ package kr.nanoit.db.impl;
 import kr.nanoit.db.UserService;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.UserEntity;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+@Slf4j
 public class UserServicePostgreSQLImpl implements UserService {
 
     private final DataBaseConfig config;
     private final PostgreSqlDbcp dbcp;
+    private final Statement statement;
+    private final Connection connection;
 
-    public UserServicePostgreSQLImpl(DataBaseConfig config) {
+    public UserServicePostgreSQLImpl(DataBaseConfig config, String sql) throws SQLException {
+        // 초기화 로직
         this.config = config;
         this.dbcp = new PostgreSqlDbcp(config);
+        this.connection = dbcp.getConnection();
+        this.statement = connection.createStatement();
 
-        // 초기화 로직
         // DATABASE 에 USER TABLE 이 있는지 확인
         // 없으면 생성
+        try {
+            if (dbcp.getConnection() == null) {
+
+                statement.executeQuery("CREATE TABLE IF NOT EXITSTS USER (ID SERIAL PRIMARY KEY ," +
+                        " USERNAME VARCHAR(50) UNIQUE NOT NULL ," +
+                        " PASSWORD VARCHAR(50) NOT NULL , " +
+                        "EMAIL VARCHAR(355) UNIQUE NOT NULL" +
+                        ")");
+            }
+        } catch (SQLException e) {
+            log.error("TABLE CREATE FAILED", e);
+        }
     }
 
     @Override
     public UserEntity save(UserEntity userEntity) {
-        try (Connection connection = dbcp.getConnection()) {
+        try {
+            statement.executeQuery("INSERT INTO USER (ID, USERNAME, PASSWORD,EMAIL) VALUES ()");
+
             // 실제 저장 쿼리 로직
 
             // INSERT INTO user (id, username, password, email) VALUE ($1, $2, $3, $4);
@@ -42,6 +64,9 @@ public class UserServicePostgreSQLImpl implements UserService {
 
     @Override
     public UserEntity findById(long userId) {
+//        statement.executeUpdate()
+        // executeUpdate는 테이블에  INSERT / DELETE / UPDATE 할 시 사용함 수행결과로 int 타입의 값을 반환
+
         // SELECT id, username, password, email FROM user WHERE id = $1
 
         // Rows

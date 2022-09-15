@@ -5,13 +5,15 @@ import kr.nanoit.db.impl.UserServiceTestImpl;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.UserEntity;
 
+import java.sql.SQLException;
+
 public interface UserService {
     static UserService createTest() {
         return new UserServiceTestImpl();
     }
 
-    static UserService createPostgreSQL(DataBaseConfig config) {
-        return new UserServicePostgreSQLImpl(config);
+    static UserService createPostgreSQL(DataBaseConfig config) throws SQLException {
+        return new UserServicePostgreSQLImpl(config, sql);
     }
 
     UserEntity save(UserEntity userEntity);

@@ -42,6 +42,9 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4'
 
+    // DBCP2
+    implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.9.0'
+
     // JDBC DRIVER
     implementation 'org.postgresql:postgresql:42.5.0'
 }
