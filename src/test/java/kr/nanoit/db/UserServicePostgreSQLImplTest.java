@@ -80,14 +80,16 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 조회 되는지")
-    void should_findId() throws ClassNotFoundException {
+    void should_findId()  {
         // given
         UserEntity testData = new UserEntity(0,"lee", "123123", "test@test.com");
         UserEntity expected =  userService.save(testData);
 
         // when
+        UserEntity actual = userService.findById(expected.getId());
 
         // then
+        assertThat(actual.getId()).isEqualTo(expected.getId());
     }
 
 

@@ -13,6 +13,6 @@ public final class PostgreSqlQuerys {
     }
 
     public static String insertUser(long id, String username, String password, String email) {
-        return "INSERTINTO users (username, password, email) VALUES ( '" + username + "', '" + password + "', '" + email + "') ";
+        return "INSERT INTO users (username, password, email) VALUES ( '" + username + "', '" + password + "', '" + email + "') ";
     }
 }

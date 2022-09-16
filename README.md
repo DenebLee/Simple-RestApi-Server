@@ -1,11 +1,10 @@
 # History
 ## TODO
-1. PostgreSqlDbcp 구현
-2. PostgreSqlDbcp 테스트 작성
-3. UserServicePostgreSQLImpl 구현
-4. UserServicePostgreSQLImpl 테스트 작성
-5. TodoServiceTestImpl 구현
-6. TodoServiceTestImpl 테스트 작성
+
+1. UserServicePostgreSQLImpl 구현
+2. UserServicePostgreSQLImpl 테스트 작성
+3. TodoServiceTestImpl 구현
+4. TodoServiceTestImpl 테스트 작성
 
 ## DONE
 - UserService.class 테스트 코드 작성 및 내부 코드 수정 ✔
@@ -13,6 +12,9 @@
 - PatchHandler.class 테스트 코드 작성 ✔
 - DeleteHandler.class 테스트 코드 작성 ✔
 - TodoHandler 시작 ✔
+- PostgreSqlDbcp 구현 ✔
+- PostgreSqlDbcp 테스트 작성 ✔
+- 
 
 ### COMMIT
 ####  2022-09-02
@@ -28,3 +30,8 @@
 - UserTest 
 - UserServiceTestImpl 테스트 코드 작성 완료 
 - TODO 작업 시작
+#### 2022-09-16
+- UserServicePostgreSQLImplTest 작성 
+  - CreateTable 테스트 코드 작성 완료 
+  - Save(user) 테스트 코드 작성 완료 
+- Exception 관련 지식 습득
