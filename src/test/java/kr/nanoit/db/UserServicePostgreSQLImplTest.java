@@ -1,57 +1,95 @@
 package kr.nanoit.db;
 
+import kr.nanoit.db.impl.PostgreSqlDbcp;
 import kr.nanoit.object.config.DataBaseConfig;
+import kr.nanoit.object.entity.UserEntity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+
 @Testcontainers
 class UserServicePostgreSQLImplTest {
+    private PostgreSqlDbcp dbcp;
 
-    // STATIC 해당 클래스 테스트 내에서 컨테이너를 모두 공유
-    // public 시 해당 클래스 테스트 각각 컨테이너를 따로 생성함
+    private UserService userService;
+
+
     @Container
     static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:14.5-alpine")
             .withDatabaseName("test")
             .withUsername("test")
             .withPassword("test");
 
+    @BeforeEach
+    void setUp() throws ClassNotFoundException {
+        dbcp = new PostgreSqlDbcp(getDataBaseConfig());
+        userService = UserService.createPostgreSQL(dbcp);
+    }
+
     @Test
-    void should_connect() throws ClassNotFoundException {
-        Class.forName("org.postgresql.Driver");
+    @DisplayName("UserService 테이블이 생성 되야함 ")
+    void should_create_table() throws Exception {
+        // given: BeforeEach
+        // when: BeforeEach
+        // then
+        try (Connection connection = dbcp.getConnection();
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("select table_name from information_schema.tables");
 
-        String connurl = String.format("jdbc:postgresql://%s:%d/%s", postgreSQLContainer.getHost(), postgreSQLContainer.getFirstMappedPort(), "test");
+            assertThat(resultSet.getMetaData().getColumnCount()).isGreaterThanOrEqualTo(1);
 
-        try (Connection connection = DriverManager.getConnection(connurl, postgreSQLContainer.getUsername(), postgreSQLContainer.getPassword())) {
-            Statement stmt = connection.createStatement();
-            // Select 1 AS PING
-            // int ping = getInteger("PING)
-            ResultSet rs = stmt.executeQuery("SELECT datname AS list FROM pg_database");
-//            ResultSet rs = stmt.executeQuery("SELECT VERSION() AS version");
-
-            while (rs.next()) {
-                String version = rs.getString("list");
-//                String version = rs.getString("version");
-                System.out.println(version);
+            boolean isCreated = false;
+            while (resultSet.next()) {
+                if (resultSet.getString(1).equals("users")) {
+                    isCreated = true;
+                }
             }
-            rs.close();
-            stmt.close();
+            assertThat(isCreated).isTrue();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
+    @Test
+    @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 저장되는지 확인")
+    void should_save() throws ClassNotFoundException {
+        // given
+        UserEntity expected = new UserEntity(0, "lee", "123123" ,"test@test.com");
+
+        // when
+        UserEntity actual = userService.save(expected);
+
+        // then
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expected);
+    }
 
     @Test
-    void should_user_service_connect() {
-        UserService userService = UserService.createPostgreSQL(getDataBaseConfig());
+    @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 조회 되는지")
+    void should_findId() throws ClassNotFoundException {
+        // given
+        UserEntity testData = new UserEntity(0,"lee", "123123", "test@test.com");
+        UserEntity expected =  userService.save(testData);
+
+        // when
+
+        // then
     }
+
 
     private static DataBaseConfig getDataBaseConfig() {
         return new DataBaseConfig()

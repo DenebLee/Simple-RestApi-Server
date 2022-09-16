@@ -7,6 +7,12 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 @Testcontainers
@@ -28,13 +34,41 @@ class PostgreSqlDbcpTest {
         assertThatCode(() -> {
             new PostgreSqlDbcp(getDataBaseConfig());
         }).doesNotThrowAnyException();
-
-
     }
+
     @Test
     @DisplayName("DBCP가 DataBase에 연결되는지 확인")
-    void shoud_connect_db(){
+    void shoud_connect_db() throws Exception {
+        PostgreSqlDbcp dbcp = new PostgreSqlDbcp(getDataBaseConfig());
 
+        Statement stmt = null;
+        ResultSet rset = null;
+
+        try (Connection conn = dbcp.getConnection()) {
+            stmt = conn.createStatement();
+            rset = stmt.executeQuery("SELECT 1");
+
+            int numcols = rset.getMetaData().getColumnCount();
+            while (rset.next()) {
+                for (int i = 1; i <= numcols; i++) {
+                    assertThat(numcols).isLessThanOrEqualTo(1);
+                    assertThat(rset.getString(i)).isEqualTo("1");
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            try {
+                if (rset != null) rset.close();
+            } catch (Exception e) {
+                throw new Exception(e);
+            }
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+                throw new Exception(e);
+            }
+        }
     }
 
     private static DataBaseConfig getDataBaseConfig() {

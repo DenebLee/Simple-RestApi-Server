@@ -1,49 +1,96 @@
 package kr.nanoit.db.impl;
 
 import kr.nanoit.db.UserService;
-import kr.nanoit.object.config.DataBaseConfig;
+import kr.nanoit.exception.CreateUserFailedException;
+import kr.nanoit.exception.DataBaseInternalError;
 import kr.nanoit.object.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 @Slf4j
 public class UserServicePostgreSQLImpl implements UserService {
 
-    private final DataBaseConfig config;
     private final PostgreSqlDbcp dbcp;
-    private final Statement statement;
-    private final Connection connection;
 
-    public UserServicePostgreSQLImpl(DataBaseConfig config, String sql) throws SQLException {
-        // 초기화 로직
-        this.config = config;
-        this.dbcp = new PostgreSqlDbcp(config);
-        this.connection = dbcp.getConnection();
-        this.statement = connection.createStatement();
+    public UserServicePostgreSQLImpl(PostgreSqlDbcp dbcp) {
+        this.dbcp = dbcp;
 
-        // DATABASE 에 USER TABLE 이 있는지 확인
-        // 없으면 생성
-        try {
-            if (dbcp.getConnection() == null) {
+        createTable(PostgreSqlQuerys.createUserTable);
+    }
 
-                statement.executeQuery("CREATE TABLE IF NOT EXITSTS USER (ID SERIAL PRIMARY KEY ," +
-                        " USERNAME VARCHAR(50) UNIQUE NOT NULL ," +
-                        " PASSWORD VARCHAR(50) NOT NULL , " +
-                        "EMAIL VARCHAR(355) UNIQUE NOT NULL" +
-                        ")");
-            }
+    private void createTable(String query) {
+        try (Connection connection = dbcp.getConnection();
+             Statement statement = connection.createStatement()) {
+            statement.execute(query);
         } catch (SQLException e) {
-            log.error("TABLE CREATE FAILED", e);
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public UserEntity findById(long userId) {
+        try {
+            Statement statement;
+            ResultSet resultSet;
+
+            try (Connection connection = dbcp.getConnection()) {
+                statement = connection.createStatement();
+                String sql = " SELECT id,username, password, email FROM user WHERE id = ('" + userId + "' ) ";
+                resultSet = statement.executeQuery(sql);
+
+                while (resultSet.next()) {
+                    UserEntity userEntity = new UserEntity();
+                    userEntity.setId(resultSet.getInt(0));
+                    return userEntity;
+                }
+                resultSet.close();
+                statement.close();
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        } catch (Exception e) {
+            throw e;
+        }
+
+
+//        statement.executeUpdate()
+        // executeUpdate 는 테이블에  INSERT / DELETE / UPDATE 할 시 사용함 수행결과로 int 타입의 값을 반환
+
+        // SELECT id, username, password, email FROM user WHERE id = $1
+
+        // Rows
+        // UserEntity userEntity = new UserEntity()';
+        // userEntity.setId(rows[0].getString("id"));
+
+        // return userEntity;
+        return null;
     }
 
     @Override
     public UserEntity save(UserEntity userEntity) {
         try {
-            statement.executeQuery("INSERT INTO USER (ID, USERNAME, PASSWORD,EMAIL) VALUES ()");
+            try (Connection conn = dbcp.getConnection()) {
+                Statement statement = conn.createStatement();
+                int affectedRows = statement.executeUpdate(PostgreSqlQuerys.insertUser(userEntity.getId(), userEntity.getUsername(), userEntity.getPassword(), userEntity.getEmail()), statement.RETURN_GENERATED_KEYS);
+
+                if (affectedRows == 0) throw new CreateUserFailedException("Creating user failed");
+
+                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                    if (resultSet.next()) {
+                        userEntity.setId(resultSet.getLong(1));
+                        return userEntity;
+                    } else {
+                        throw new DataBaseInternalError("not found result set");
+                    }
+                }
+            }
 
             // 실제 저장 쿼리 로직
 
@@ -55,27 +102,11 @@ public class UserServicePostgreSQLImpl implements UserService {
 
             // INSERT 시 ID Return 하는 방법이 있으니 찾아볼것
         } catch (Exception e) {
-            // 쿼리 로직 실행 중 알수없는 에러가 발생할때
-        } finally {
-            // 자원 정리
+            log.error("failed saved query", e);
         }
         return null;
     }
 
-    @Override
-    public UserEntity findById(long userId) {
-//        statement.executeUpdate()
-        // executeUpdate는 테이블에  INSERT / DELETE / UPDATE 할 시 사용함 수행결과로 int 타입의 값을 반환
-
-        // SELECT id, username, password, email FROM user WHERE id = $1
-
-        // Rows
-        // UserEntity userEntity = new UserEntity()';
-        // userEntity.setId(rows[0].getString("id"));
-
-        // return userEntity;
-        return null;
-    }
 
     @Override
     public boolean deleteById(long userId) {
