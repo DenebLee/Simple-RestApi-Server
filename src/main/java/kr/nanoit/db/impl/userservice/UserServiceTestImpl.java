@@ -1,6 +1,5 @@
-package kr.nanoit.db.impl;
+package kr.nanoit.db.impl.userservice;
 
-import kr.nanoit.db.UserService;
 import kr.nanoit.object.entity.UserEntity;
 
 import java.util.concurrent.ConcurrentHashMap;

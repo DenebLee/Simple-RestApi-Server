@@ -1,10 +1,9 @@
 # History
 ## TODO
-
-1. UserServicePostgreSQLImpl 구현
-2. UserServicePostgreSQLImpl 테스트 작성
-3. TodoServiceTestImpl 구현
-4. TodoServiceTestImpl 테스트 작성
+1. TodoServiceTestImpl 구현
+2. TodoServiceTestImpl 테스트 작성
+3. TodoServicePostgreSQLImpl 구현
+4. TodoServicePostgreSQLImpl 테스트 작성
 
 ## DONE
 - UserService.class 테스트 코드 작성 및 내부 코드 수정 ✔
@@ -14,8 +13,8 @@
 - TodoHandler 시작 ✔
 - PostgreSqlDbcp 구현 ✔
 - PostgreSqlDbcp 테스트 작성 ✔
-- 
-
+- UserServicePostgreSQLImpl 구현 ✔ 
+- UserServicePostgreSQLImpl 테스트 작성 ✔
 ### COMMIT
 ####  2022-09-02
 - http server 생성

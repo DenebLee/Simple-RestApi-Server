@@ -1,8 +1,6 @@
-package kr.nanoit.db;
+package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
-import kr.nanoit.db.impl.UserServicePostgreSQLImpl;
-import kr.nanoit.db.impl.UserServiceTestImpl;
 import kr.nanoit.object.entity.UserEntity;
 
 public interface UserService {
@@ -14,7 +12,7 @@ public interface UserService {
         return new UserServicePostgreSQLImpl(dbcp);
     }
 
-    UserEntity save(UserEntity userEntity);
+    UserEntity save(UserEntity userEntity) ;
 
     UserEntity findById(long userId);
 

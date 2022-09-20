@@ -1,5 +1,6 @@
 package kr.nanoit.db;
 
+import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

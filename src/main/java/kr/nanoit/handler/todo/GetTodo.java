@@ -1,7 +1,7 @@
 package kr.nanoit.handler.todo;
 
 import com.sun.net.httpserver.HttpExchange;
-import kr.nanoit.db.TodoService;
+import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.utils.ExchangeRawPrinter;
 import lombok.extern.slf4j.Slf4j;

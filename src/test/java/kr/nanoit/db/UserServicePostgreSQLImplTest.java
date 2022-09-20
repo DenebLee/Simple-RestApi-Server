@@ -1,6 +1,7 @@
 package kr.nanoit.db;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
+import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,9 +63,9 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 저장되는지 확인")
-    void should_save() throws ClassNotFoundException {
+    void should_save() {
         // given
-        UserEntity expected = new UserEntity(0, "lee", "123123" ,"test@test.com");
+        UserEntity expected = createTestUserEntity();
 
         // when
         UserEntity actual = userService.save(expected);
@@ -76,22 +77,61 @@ class UserServicePostgreSQLImplTest {
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(expected);
+        assertThat(userService.findById(actual.getId())).isNotNull();
     }
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 조회 되는지")
-    void should_findId()  {
+    void should_findId() {
         // given
-        UserEntity testData = new UserEntity(0,"lee", "123123", "test@test.com");
-        UserEntity expected =  userService.save(testData);
+        UserEntity expected = userService.save(createTestUserEntity());
 
         // when
         UserEntity actual = userService.findById(expected.getId());
 
         // then
         assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getUsername()).isEqualTo(expected.getUsername());
+        assertThat(actual.getPassword()).isEqualTo(expected.getPassword());
+        assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
     }
 
+    @Test
+    @DisplayName("UserServicePostgreSQLImpleTest userEntity 정상적으로 삭제 되는지")
+    void should_delete() {
+        // given
+        UserEntity expected = userService.save(createTestUserEntity());
+
+        // when
+        boolean actual = userService.deleteById(expected.getId());
+
+        // then
+        assertThat(actual).isTrue();
+        assertThat(userService.findById(expected.getId())).isNull();
+    }
+
+    @Test
+    @DisplayName("UserServicePostgreSQLImpleTest userEntity 정상적으로 수정 되는지")
+    void should_update() {
+        // given
+        UserEntity originalUserDataExpected = userService.save(createTestUserEntity());
+        UserEntity updateExpected = new UserEntity(originalUserDataExpected.getId(), "LeeJeongSeob", "444", "post@naver.com");
+
+        // when
+        UserEntity actual = userService.update(updateExpected);
+
+        // then
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isEqualTo(updateExpected.getId());
+        assertThat(actual.getUsername()).isEqualTo(updateExpected.getUsername());
+        assertThat(actual.getPassword()).isEqualTo(updateExpected.getPassword());
+        assertThat(actual.getEmail()).isEqualTo(updateExpected.getEmail());
+        assertThat(actual).isNotEqualTo(originalUserDataExpected);
+    }
+
+    private static UserEntity createTestUserEntity() {
+        return new UserEntity(0, "lee", "123123", "test@test.com");
+    }
 
     private static DataBaseConfig getDataBaseConfig() {
         return new DataBaseConfig()

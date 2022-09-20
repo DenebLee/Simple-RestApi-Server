@@ -1,7 +1,7 @@
 package kr.nanoit;
 
 import com.sun.net.httpserver.HttpServer;
-import kr.nanoit.db.UserService;
+import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.handler.HealthHandler;
 import kr.nanoit.handler.todo.TodoHandler;
 import kr.nanoit.handler.user.UserHandler;

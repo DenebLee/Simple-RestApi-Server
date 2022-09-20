@@ -1,6 +1,5 @@
-package kr.nanoit.db;
+package kr.nanoit.db.impl.todoservice;
 
-import kr.nanoit.db.impl.TodoServiceTestImpl;
 import kr.nanoit.object.entity.TodoEntity;
 
 public interface TodoService {

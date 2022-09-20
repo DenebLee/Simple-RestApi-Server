@@ -10,7 +10,7 @@ import static kr.nanoit.utils.GlobalVariable.METHOD_POST;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import kr.nanoit.db.UserService;
+import kr.nanoit.db.impl.userservice.UserService;
 
 import java.io.IOException;
 

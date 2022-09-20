@@ -12,7 +12,21 @@ public final class PostgreSqlQuerys {
     private PostgreSqlQuerys() {
     }
 
-    public static String insertUser(long id, String username, String password, String email) {
+    public static String insertUser(String username, String password, String email) {
         return "INSERT INTO users (username, password, email) VALUES ( '" + username + "', '" + password + "', '" + email + "') ";
+    }
+
+    public static String selectUser(long id) {
+        return "SELECT * FROM users WHERE id = '" + id + "' ";
+    }
+
+    public static String deleteUser(long id) {
+        return "DELETE FROM users WHERE id = '" + id + "'";
+    }
+
+    public static String updateUser(long id, String username, String password, String email) {
+        return "UPDATE users SET username = '" + username + "', password = '" + password + "', email = '" + email + "' WHERE id = '" + id + "'";
+
+
     }
 }

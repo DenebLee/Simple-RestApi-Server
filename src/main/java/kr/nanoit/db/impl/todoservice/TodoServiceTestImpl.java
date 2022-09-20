@@ -1,6 +1,5 @@
-package kr.nanoit.db.impl;
+package kr.nanoit.db.impl.todoservice;
 
-import kr.nanoit.db.TodoService;
 import kr.nanoit.object.entity.TodoEntity;
 
 import java.util.concurrent.ConcurrentHashMap;

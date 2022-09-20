@@ -3,8 +3,8 @@ package kr.nanoit.handler.todo;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import kr.nanoit.db.TodoService;
-import kr.nanoit.db.impl.TodoServiceTestImpl;
+import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

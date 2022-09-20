@@ -1,6 +1,6 @@
 package kr.nanoit;
 
-import kr.nanoit.db.UserService;
+import kr.nanoit.db.impl.userservice.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

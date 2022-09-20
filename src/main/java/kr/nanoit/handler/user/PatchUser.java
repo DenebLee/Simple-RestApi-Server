@@ -3,7 +3,7 @@ package kr.nanoit.handler.user;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
-import kr.nanoit.db.UserService;
+import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.object.entity.UserEntity;
 import kr.nanoit.utils.Mapper;

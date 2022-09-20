@@ -1,9 +1,7 @@
 package kr.nanoit.exception;
 
-import java.sql.SQLException;
-
-public class DataBaseInternalError extends SQLException {
-    public DataBaseInternalError(String reason) {
-        super(reason);
+public class DataBaseInternalError extends Exception {
+    public DataBaseInternalError(String message) {
+        super(message);
     }
 }
