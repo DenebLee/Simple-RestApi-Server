@@ -51,7 +51,9 @@
 - 프로젝트 내 테스트 코드 전체 통과 확인
 
 
-## Project
+## Project Structure
+```bash
+
 └─src  
 ├─main  
 │  ├─java  
@@ -160,4 +162,4 @@
 └─resources  
 logback-test.xml  
 
-
+```
