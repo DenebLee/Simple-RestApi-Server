@@ -1,4 +1,4 @@
-package kr.nanoit.db;
+package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.object.entity.UserEntity;

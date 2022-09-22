@@ -1,7 +1,6 @@
-package kr.nanoit.db;
+package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
-import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +37,7 @@ class UserServicePostgreSQLImplTest {
     }
 
     @Test
-    @DisplayName("UserService 테이블이 생성 되야함 ")
+    @DisplayName("UserService 테이블이 생성 되어야함 ")
     void should_create_table() throws Exception {
         // given: BeforeEach
         // when: BeforeEach
@@ -82,7 +81,7 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 조회 되는지")
-    void should_findId() {
+    void should_findById() {
         // given
         UserEntity expected = userService.save(createTestUserEntity());
 

@@ -1,9 +1,8 @@
 # History
 ## TODO
-1. TodoServiceTestImpl 구현
-2. TodoServiceTestImpl 테스트 작성
-3. TodoServicePostgreSQLImpl 구현
-4. TodoServicePostgreSQLImpl 테스트 작성
+1. TodoServicePostgreSQLImpl 구현
+2. TodoServicePostgreSQLImpl 테스트 작성
+3. 싱글톤 패턴으로 리펙토링 
 
 ## DONE
 - UserService.class 테스트 코드 작성 및 내부 코드 수정 ✔
@@ -34,3 +33,14 @@
   - CreateTable 테스트 코드 작성 완료 
   - Save(user) 테스트 코드 작성 완료 
 - Exception 관련 지식 습득
+#### 2022-09-20
+- UserServicePostgreSQLImpl 테스트 구현 완료 
+  - 도중 프로젝트 sdk꼬여서 시간이 올래걸림
+#### 2022-09-21
+- TodoServicePostgreSQLImpl 구현
+  - @POST, @SAVE 구현
+  - TimeStamp 변환 과정에서 index parsing error로 자바 시간 관련 공부를 진행
+  - 오류 수정 완료 
+#### 2022-09-22 
+- TodoServicePostgreSQLImpl 구현 중 
+  - 

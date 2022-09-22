@@ -1,6 +1,6 @@
 package kr.nanoit.db.impl;
 
-public final class PostgreSqlQuerys {
+public final class UserServicePostgreSqlQuerys {
 
     public final static String createUserTable = "CREATE TABLE IF NOT EXISTS users " +
             "(id BIGSERIAL NOT NULL, " +
@@ -9,7 +9,7 @@ public final class PostgreSqlQuerys {
             " email VARCHAR(255), " +
             " PRIMARY KEY ( id ))";
 
-    private PostgreSqlQuerys() {
+    private UserServicePostgreSqlQuerys() {
     }
 
     public static String insertUser(String username, String password, String email) {

@@ -13,12 +13,3 @@ public class TodoEntity {
     private String deletedAt;
     private String content;
 }
-
-////////////////////////////////
-// CREATE TABLE todo (
-//    id        BIGSERIAL PRIMARY KEY,
-//    createdAt TIMESTAMP,
-//    deletedAt TIMESTAMP,
-//    content   VARCHAR(512)
-// )
-////////////////////////////////
