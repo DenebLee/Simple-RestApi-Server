@@ -5,6 +5,7 @@ import kr.nanoit.db.impl.TodoServicePostgreSqlQuerys;
 import kr.nanoit.exception.CreateFailedException;
 import kr.nanoit.exception.DeleteException;
 import kr.nanoit.exception.FindFailedException;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.TodoEntity;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,9 +29,6 @@ public class TodoServicePostgreSQLImpl implements TodoService {
         }
     }
 
-    // post 에 삭제된 시간을 삽입할 이유가 있는 지 생각중
-    // String 으로 시간을 받는데 Date 로 받아도 되지않을까
-    // SimpleDateFormat 을 String 으로 변환
 
     @Override
     public TodoEntity save(TodoEntity todoEntity) {
@@ -39,16 +37,18 @@ public class TodoServicePostgreSQLImpl implements TodoService {
 
             Timestamp creatAt = Timestamp.valueOf(todoEntity.getCreatedAt());
 
-            int affectRows = statement.executeUpdate(TodoServicePostgreSqlQuerys.insertTodo(creatAt, todoEntity.getContent()), statement.RETURN_GENERATED_KEYS);
+            int affectRows = statement.executeUpdate(TodoServicePostgreSqlQuerys.insertTodo(creatAt, todoEntity.getContent(), todoEntity.isCompleted()), statement.RETURN_GENERATED_KEYS);
 
             if (affectRows == 0) {
                 return null;
             }
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                if (resultSet.next()) {
-                    todoEntity.setTodoId(resultSet.getLong(1));
-                    return todoEntity;
+                if (resultSet != null) {
+                    while (resultSet.next()) {
+                        todoEntity.setTodoId(resultSet.getLong(1));
+                        return todoEntity;
+                    }
                 } else {
                     throw new CreateFailedException("not found result set");
                 }
@@ -65,15 +65,16 @@ public class TodoServicePostgreSQLImpl implements TodoService {
         try (Connection connection = dbcp.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.selectTodo(todoId))) {
             resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                TodoEntity todoEntity = new TodoEntity();
-                todoEntity.setTodoId(resultSet.getLong("id"));
-                todoEntity.setCreatedAt(resultSet.getString("createAt"));
-                todoEntity.setDeletedAt(resultSet.getString("deleteAt"));
-                todoEntity.setContent(resultSet.getString("content"));
-
-                return todoEntity;
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    TodoEntity todoEntity = new TodoEntity();
+                    todoEntity.setTodoId(resultSet.getLong("id"));
+                    todoEntity.setCreatedAt(resultSet.getString("createAt"));
+                    todoEntity.setModifiedAt(resultSet.getString("modifiedAt"));
+                    todoEntity.setContent(resultSet.getString("content"));
+                    todoEntity.setCompleted(resultSet.getBoolean("completed"));
+                    return todoEntity;
+                }
             } else {
                 throw new FindFailedException("not found result set");
             }
@@ -86,14 +87,14 @@ public class TodoServicePostgreSQLImpl implements TodoService {
     @Override
     public boolean deleteById(long todoId) {
         try (Connection connection = dbcp.getConnection();
-
              PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.deleteTodo(todoId))) {
+
             int affectRow = preparedStatement.executeUpdate();
             if (affectRow == 0) {
                 throw new DeleteException("There are no deleted rows");
             }
         } catch (Exception e) {
-            log.error("failed delete query",e );
+            log.error("failed delete query", e);
             return false;
         }
         return true;
@@ -101,6 +102,22 @@ public class TodoServicePostgreSQLImpl implements TodoService {
 
     @Override
     public TodoEntity update(TodoEntity todoEntity) {
+        if (todoEntity != null) {
+            try (Connection connection = dbcp.getConnection()) {
+                Timestamp modifiedAt = Timestamp.valueOf(todoEntity.getModifiedAt());
+                PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.updateTodo(todoEntity.getTodoId(), modifiedAt, todoEntity.getContent(), todoEntity.isCompleted()));
+
+                int affectRow = preparedStatement.executeUpdate();
+
+                if (affectRow == 0) {
+                    throw new UpdateException("no correction made");
+                }
+                todoEntity = findById(todoEntity.getTodoId());
+                return todoEntity;
+            } catch (Exception e) {
+                log.error("failed updated query", e);
+            }
+        }
         return null;
     }
 

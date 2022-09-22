@@ -10,6 +10,7 @@ import lombok.*;
 public class TodoEntity {
     private long todoId;
     private String createdAt;
-    private String deletedAt;
+    private String modifiedAt;
     private String content;
+    private boolean completed;
 }

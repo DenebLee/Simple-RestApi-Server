@@ -32,7 +32,7 @@ public class TodoServiceTestImpl implements TodoService {
 
     @Override
     public boolean deleteById(long todoId) {
-        return todoList.remove(todoId) != null; // 이전값이 있는거는 삭제 됨, 없으면 null이라서 삭제 안됨
+        return todoList.remove(todoId) != null;
     }
 
     @Override

@@ -37,17 +37,18 @@ public class UserServicePostgreSQLImpl implements UserService {
              PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.selectUser(userId))) {
             resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
-                UserEntity userEntity = new UserEntity();
-                userEntity.setId(resultSet.getLong("id"));
-                userEntity.setUsername(resultSet.getString("username"));
-                userEntity.setPassword(resultSet.getString("password"));
-                userEntity.setEmail(resultSet.getString("email"));
-
-                return userEntity;
-
-            } else {
+            if(resultSet != null){
+                while (resultSet.next()) {
+                    UserEntity userEntity = new UserEntity();
+                    userEntity.setId(resultSet.getLong("id"));
+                    userEntity.setUsername(resultSet.getString("username"));
+                    userEntity.setPassword(resultSet.getString("password"));
+                    userEntity.setEmail(resultSet.getString("email"));
+                    return userEntity;
+                }
+            }else {
                 throw new FindFailedException("not found result set");
+
             }
         } catch (Exception e) {
             log.error("failed found query", e);

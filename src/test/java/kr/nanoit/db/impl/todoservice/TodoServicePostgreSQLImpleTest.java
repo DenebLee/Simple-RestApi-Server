@@ -10,7 +10,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -63,7 +66,7 @@ class TodoServicePostgreSQLImpleTest {
     void should_save() {
         // given
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
-        TodoEntity expected = new TodoEntity(0,createAt,null,"세이브 되는지 체크하고 있어요");
+        TodoEntity expected = new TodoEntity(0, createAt, null, "세이브 되는지 체크하고 있어요", true);
 
         // when
         TodoEntity actual = todoService.save(expected);
@@ -84,7 +87,7 @@ class TodoServicePostgreSQLImpleTest {
     void should_findById() {
         // given
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
-        TodoEntity expected = todoService.save(new TodoEntity(0, createAt, null, "안녕하세요 오늘은 시간 변환 때문에 힘들었어요"));
+        TodoEntity expected = todoService.save(new TodoEntity(0, createAt, null, "안녕하세요 오늘은 시간 변환 때문에 힘들었어요", true));
 
         // when
         TodoEntity actual = todoService.findById(expected.getTodoId());
@@ -92,19 +95,18 @@ class TodoServicePostgreSQLImpleTest {
         // then
         assertThat(actual.getTodoId()).isEqualTo(expected.getTodoId());
         assertThat(actual.getCreatedAt()).isEqualTo(expected.getCreatedAt());
-        assertThat(actual.getDeletedAt()).isNull();
         assertThat(actual.getContent()).isEqualTo(expected.getContent());
     }
 
     @Test
     @DisplayName("TodoServicePostgreImpleTest TodoEntity 정상적으로 삭제 되는지")
-    void shoud_delete(){
+    void should_delete() {
         // given
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
-        TodoEntity expected = todoService.save(new TodoEntity(0,createAt,null,"삭제 테스트 중입니다. 삭제 되었으면 좋겠네요"));
+        TodoEntity expected = todoService.save(new TodoEntity(0, createAt, null, "삭제 테스트 중입니다. 삭제 되었으면 좋겠네요", false));
 
         // when
-        boolean actual  = todoService.deleteById(expected.getTodoId());
+        boolean actual = todoService.deleteById(expected.getTodoId());
 
         // then
         assertThat(actual).isTrue();
@@ -113,12 +115,25 @@ class TodoServicePostgreSQLImpleTest {
 
     @Test
     @DisplayName("TodoServicePostgreimpleTest TodoEntity 정상적으로 수정 되는지")
-    void should_update(){
+    void should_update() {
         // given
+        String modifiedAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
+        String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
+
+        TodoEntity originalTodoDataExpected = todoService.save(new TodoEntity(0, createAt , modifiedAt, "수정전 투두리스트입니다", false));
+        TodoEntity updateExpected = new TodoEntity(originalTodoDataExpected.getTodoId(), createAt, modifiedAt, "수정된 내용입니다 하하하하", true);
 
         // when
+        TodoEntity actual = todoService.update(updateExpected);
 
         // then
+        assertThat(actual).isNotNull();
+        assertThat(actual.getTodoId()).isEqualTo(updateExpected.getTodoId());
+        assertThat(actual.getCreatedAt()).isEqualTo(updateExpected.getCreatedAt());
+        assertThat(actual.getModifiedAt()).isEqualTo(updateExpected.getModifiedAt());
+        assertThat(actual.getContent()).isEqualTo(updateExpected.getContent());
+        assertThat(actual.isCompleted()).isEqualTo(updateExpected.isCompleted());
+        assertThat(actual).isNotEqualTo(originalTodoDataExpected);
     }
 
 

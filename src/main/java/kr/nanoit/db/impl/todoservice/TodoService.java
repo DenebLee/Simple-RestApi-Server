@@ -18,6 +18,5 @@ public interface TodoService {
     boolean deleteById(long todoId);
 
     TodoEntity update(TodoEntity todoEntity);
-
     boolean containsById(long todoId);
 }
