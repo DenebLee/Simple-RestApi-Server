@@ -12,9 +12,10 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static kr.nanoit.utils.GlobalVariable.*;
-import static kr.nanoit.handler.common.HandlerUtil.*;
+import static kr.nanoit.handler.common.HandlerUtil.badRequest;
+import static kr.nanoit.handler.common.HandlerUtil.responseOk;
 import static kr.nanoit.handler.common.Validation.internalServerError;
+import static kr.nanoit.utils.GlobalVariable.HTTP_OK;
 
 
 @Slf4j

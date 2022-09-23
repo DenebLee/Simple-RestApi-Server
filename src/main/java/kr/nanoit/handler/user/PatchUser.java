@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import static kr.nanoit.handler.common.HandlerUtil.badRequest;
+import static kr.nanoit.handler.common.HandlerUtil.responseOk;
+import static kr.nanoit.handler.common.Validation.internalServerError;
 import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
-import static kr.nanoit.handler.common.HandlerUtil.*;
-import static kr.nanoit.handler.common.Validation.*;
 
 @Slf4j
 public final class PatchUser {
@@ -27,66 +28,66 @@ public final class PatchUser {
     }
 
 public void handle(HttpExchange exchange) throws IOException {
-        try {
+    try {
 
-            if(!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)){
-                badRequest(exchange, "not found: Content-Type Header");
-                return;
-            }
-
-            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-                badRequest(exchange, "invalid: Content-Type Header");
-            }
-
-            if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                badRequest(exchange, "accept Content-Type: application/json");
-                return;
-            }
-
-            String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));
-            UserDto userDto = getRead(body);
-            log.info(String.valueOf(userDto));
-
-            if (userDto == null) {
-                badRequest(exchange, "parse failed");
-                return;
-            }
-
-            if (userDto.getId() == 0) {
-                badRequest(exchange,"not found: user.id");
-                return;
-            }
-
-            if(userDto.getUsername() == null){
-                badRequest(exchange,"not found: user.username" );
-                return;
-            }
-
-            if(userDto.getPassword() == null){
-                badRequest(exchange,"not found: user.password" );
-                return;
-            }
-
-            if(userDto.getEmail() == null){
-                badRequest(exchange,"not found: user.email" );
-                return;
-            }
-
-            UserEntity userEntity = userService.update(userDto.toEntity());
-
-            if(userEntity == null){
-                internalServerError(exchange, "update query failed");
-            }
-
-            responseOk(exchange, Mapper.writePretty(userEntity).getBytes(StandardCharsets.UTF_8));
-
-        } catch (Exception e) {
-            log.error("patch handler error occurred", e);
-            internalServerError(exchange, "Unknown Error");
-        } finally {
-            exchange.close();
+        if(!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)){
+            badRequest(exchange, "not found: Content-Type Header");
+            return;
         }
+
+        if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
+            badRequest(exchange, "invalid: Content-Type Header");
+        }
+
+        if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
+            badRequest(exchange, "accept Content-Type: application/json");
+            return;
+        }
+
+        String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));
+        UserDto userDto = getRead(body);
+        log.info(String.valueOf(userDto));
+
+        if (userDto == null) {
+            badRequest(exchange, "parse failed");
+            return;
+        }
+
+        if (userDto.getId() == 0) {
+            badRequest(exchange,"not found: user.id");
+            return;
+        }
+
+        if(userDto.getUsername() == null){
+            badRequest(exchange,"not found: user.username" );
+            return;
+        }
+
+        if(userDto.getPassword() == null){
+            badRequest(exchange,"not found: user.password" );
+            return;
+        }
+
+        if(userDto.getEmail() == null){
+            badRequest(exchange,"not found: user.email" );
+            return;
+        }
+
+        UserEntity userEntity = userService.update(userDto.toEntity());
+
+        if(userEntity == null){
+            internalServerError(exchange, "update query failed");
+        }
+
+        responseOk(exchange, Mapper.writePretty(userEntity).getBytes(StandardCharsets.UTF_8));
+
+    } catch (Exception e) {
+        log.error("patch handler error occurred", e);
+        internalServerError(exchange, "Unknown Error");
+    } finally {
+        exchange.close();
     }
+}
 
     private UserDto getRead(String body) {
         try {

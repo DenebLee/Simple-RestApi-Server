@@ -40,9 +40,6 @@ class DeleteUserTest {
     }
 
 
-
-
-
     @Test
     @DisplayName("Delete /user (쿼리 스트링이 NULL) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_null_query_string() throws IOException {

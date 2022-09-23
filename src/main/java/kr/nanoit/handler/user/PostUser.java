@@ -19,7 +19,6 @@ import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
 
 @Slf4j
 public final class PostUser {
-
     private final UserService userService;
 
     public PostUser(UserService userService) {
@@ -30,7 +29,7 @@ public final class PostUser {
     public void handle(HttpExchange exchange) {
         try {
             // debugging
-//            String body = ExchangeRawPrinter.print(exchange);
+//            ExchangeRawPrinter.print(exchange);
 
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
                 badRequest(exchange, "not found: Content-Type Header");
@@ -70,6 +69,8 @@ public final class PostUser {
             }
 
             UserEntity userEntity = userService.save(userDto.toEntity());
+            System.out.println(userDto);
+            System.out.println(userEntity);
 
             responseOk(exchange, Mapper.writePretty(userEntity.toDto()).getBytes(StandardCharsets.UTF_8));
 

@@ -12,8 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import static kr.nanoit.handler.common.HandlerUtil.*;
-import static kr.nanoit.handler.common.Validation.*;
+import static kr.nanoit.handler.common.HandlerUtil.badRequest;
+import static kr.nanoit.handler.common.HandlerUtil.responseOk;
+import static kr.nanoit.handler.common.Validation.internalServerError;
 
 @Slf4j
 public class GetUser {

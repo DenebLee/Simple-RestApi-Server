@@ -3,9 +3,9 @@ package kr.nanoit.handler.todo;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
 
-public class DeleteToto {
+public class DeleteTodo {
 
-    public DeleteToto(TodoService todoService) {
+    public DeleteTodo(TodoService todoService) {
 
     }
 

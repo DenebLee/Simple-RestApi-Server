@@ -171,7 +171,7 @@ class PatchUserTest {
     }
 
     @Test
-    @DisplayName("[PATCH /user] 유저 정보 수정 요청을 했을때 정상이면 요청했던 USER 정보가 내려와야 됨")
+    @DisplayName("PATCH /user 유저 정보 수정 요청을 했을때 정상이면 요청했던 USER 정보가 내려와야 됨")
     void should_return_ok_when_user_patch() throws IOException {
         // given
         UserEntity originalUserData = userService.save(new UserEntity(0, "test01", "123123", "test01@test.com"));

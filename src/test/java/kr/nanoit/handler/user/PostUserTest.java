@@ -31,7 +31,6 @@ class PostUserTest {
     private UserService userService;
     private int port;
 
-    // 테스트 메소드 한개당 새롭게 실행됨
     @BeforeEach
     void setUp() throws IOException {
         port = getRandomPort();

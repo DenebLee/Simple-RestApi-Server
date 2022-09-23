@@ -17,13 +17,13 @@ public class TodoHandler implements HttpHandler {
     private final GetTodo getTodo;
     private final PostTodo postTodo;
     private final PatchTodo patchTodo;
-    private final DeleteToto deleteToto;
+    private final DeleteTodo deleteToto;
 
     public TodoHandler() {
         todoService = new TodoServiceTestImpl();
         getTodo = new GetTodo(todoService);
         postTodo = new PostTodo(todoService);
-        deleteToto = new DeleteToto(todoService);
+        deleteToto = new DeleteTodo(todoService);
         patchTodo = new PatchTodo(todoService);
     }
 
