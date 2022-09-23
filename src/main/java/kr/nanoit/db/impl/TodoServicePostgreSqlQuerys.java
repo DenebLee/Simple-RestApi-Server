@@ -9,14 +9,14 @@ public final class TodoServicePostgreSqlQuerys {
             " createAt TIMESTAMP, " +
             " modifiedAt TIMESTAMP, " +
             " content VARCHAR(512), " +
-            " completed BOOLEAN NOT NULL, " +
+            " completed VARCHAR(64) NOT NULL, " +
             " PRIMARY KEY ( id ))";
 
     private TodoServicePostgreSqlQuerys() {
     }
 
-    public static String insertTodo(Timestamp createAt, String content,boolean completed) {
-        return "INSERT INTO todo (createAt, content, completed) VALUES ( '" + createAt + "' ,'" + content + "' , '" + completed + "') ";
+    public static String insertTodo(Timestamp createAt, String content,String writer) {
+        return "INSERT INTO todo (createAt, content, writer) VALUES ( '" + createAt + "' ,'" + content + "' , '" + writer + "') ";
     }
 
     public static String selectTodo(long id) {
@@ -27,7 +27,7 @@ public final class TodoServicePostgreSqlQuerys {
         return "DELETE FROM todo WHERE id = '" + id + "'";
     }
 
-    public static String updateTodo(long id, Timestamp modifiedAt, String content, boolean completed) {
-        return "UPDATE todo SET modifiedAt = '" + modifiedAt + "', content = '" + content + "' , completed = '" + completed + "' WHERE id = '" + id + "'";
+    public static String updateTodo(long id, Timestamp modifiedAt, String content, String writer) {
+        return "UPDATE todo SET modifiedAt = '" + modifiedAt + "', content = '" + content + "' , writer = '" + writer + "' WHERE id = '" + id + "'";
     }
 }

@@ -1,11 +1,11 @@
-package kr.nanoit.handler.user;
+package kr.nanoit.handler.todo;
 
 import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
-import kr.nanoit.object.dto.UserDto;
+import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.utils.Mapper;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -26,8 +26,8 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("POST /user 테스트")
-class PostUserTest {
+@DisplayName("POST / todo 테스트")
+ class PostTodoTest {
 
     private SandBoxHttpServer httpServer;
     private UserService userService;
@@ -35,68 +35,68 @@ class PostUserTest {
     private int port;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setup() throws IOException {
         port = getRandomPort();
         userService = new UserServiceTestImpl();
         todoService = new TodoServiceTestImpl();
-        httpServer = new SandBoxHttpServer("localhost", port, userService, todoService);
+        httpServer = new SandBoxHttpServer("localhost", port , userService, todoService);
         httpServer.start();
     }
 
     @Test
-        @DisplayName("POST / header = content type 을 요청했을때 올바르지 않으면 badRequest 가 떨어져야됨")
-        void should_return_bad_request_when_uncorrected_content_type_header() throws IOException {
-            // given
-            String contentType = "xontent-type";
-            String headerValue = "application/json";
-            String url = "http://localhost:" + port + "/user";
+    @DisplayName("POST / todo ->  header = content type 을 요청했을때 올바르지 않으면 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_uncorrected_content_type_header() throws IOException {
+        // given
+        String contentType = "xontent-type";
+        String headerValue = "application/json";
+        String url = "http://localhost:" + port + "/todo";
 
-            // when
-            Response actual = post(url, contentType, headerValue);
+        // when
+        Response actual = post(url, contentType, headerValue);
 
-            // then
-            assertThat(actual.code).isEqualTo(400);
-            assertThat(actual.header).isNotEqualTo(contentType);
-            assertThat(actual.body).contains("not found: Content-Type Header");
-        }
-
-        @Test
-        @DisplayName("POST / user-> header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
-        void should_return_bad_request_when_empty_content_type_header() throws IOException {
-            // given
-            String url = "http://localhost:" + port + "/user";
-
-            // when
-            Response actual = post(url, null, null);
-
-            // then
-            assertThat(actual.code).isEqualTo(400);
-            assertThat(actual.header).contains("application/json");
-            assertThat(actual.body).contains("not found: Content-Type Header");
-        }
-
-        @Test
-        @DisplayName("POST / user-> header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
-        void should_return_bad_request_when_not_application_json() throws IOException {
-            // given
-            String contentType = "content-type";
-            String headerValue = "application/xml";
-            String url = "http://localhost:" + port + "/user";
-
-            // when
-            Response actual = post(url, contentType, headerValue);
-
-            // then
-            assertThat(actual.code).isEqualTo(400);
-            assertThat(actual.body).contains("accept Content-Type: application/json");
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.header).isNotEqualTo(contentType);
+        assertThat(actual.body).contains("not found: Content-Type Header");
     }
 
     @Test
-    @DisplayName("POST /  user-> UserDto 가 null 일 경우  badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_userdto_is_null() throws IOException {
+    @DisplayName("POST / todo -> header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_empty_content_type_header() throws IOException {
+        // given
+        String url = "http://localhost:" + port + "/todo";
+
+        // when
+        Response actual = post(url, null, null);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.header).contains("application/json");
+        assertThat(actual.body).contains("accept Content-Type application/json");
+    }
+
+    @Test
+    @DisplayName("POST / todo -> header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_not_application_json() throws IOException {
+        // given
+        String contentType = "content-type";
+        String headerValue = "application/xml";
+        String url = "http://localhost:" + port + "/todo";
+
+        // when
+        Response actual = post(url, contentType, headerValue);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("accept Content-Type application/json");
+    }
+
+    @Test
+    @DisplayName("POST / todo -> TodoDto 가 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_tododto_is_null() throws IOException {
         // given
         String json = "";
-        String url = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
 
@@ -109,11 +109,11 @@ class PostUserTest {
     }
 
     @Test
-    @DisplayName("POST / user-> userName 이 null 일 경우  badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_username_is_null() throws IOException {
+    @DisplayName("POST / todo -> createdAt 이 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_createAt_is_null() throws IOException {
         // given
-        String json = "{\"password\": \"123123\" , \"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
+        String json = "{\"modified\": \"null\" , \"content\" : \"안녕하세요\", \"completed\" : \"true\"}";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
 
@@ -122,15 +122,15 @@ class PostUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.username");
+        assertThat(actual.body).contains("not Found : Created Time");
     }
 
     @Test
-    @DisplayName("POST / user-> userPassword 가 null 일 경우  badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_userpassword_is_null() throws IOException {
+    @DisplayName("POST / todo -> content 가 null 일 경우  badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_content_is_null() throws IOException {
         // given
-        String json = "{\"username\": \"test\", \"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
+        String json = "{\"createdAt\": \"2022-02-02 05:55:22\",\"modified\" : \"null\" , \"completed\" : \"false\"}";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -138,42 +138,28 @@ class PostUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.password");
-    }
-
-    @Test
-    @DisplayName("POST / user-> userEmail null 일 경우  badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_user_email_is_null() throws IOException {
-        // given
-        String json = "{\"username\": \"test\",\"password\": \"123123\" }";
-        String url = "http://localhost:" + port + "/user";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = postJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.email");
+        assertThat(actual.body).contains("not Found : Content");
     }
 
 
+
+
     @Test
-    @DisplayName("POST / user-> 회원가입 요청했을때 정상이면 요청한 USER 정보가 내려와야 됨")
+    @DisplayName("POST / todo -> Todo를 등록했을 때  정상이면 요청한 Todo 정보가 내려와야 됨")
     void should_return_ok_when_user() throws IOException {
         // given
-        UserDto expected = new UserDto(0, "lee", "123123", "test@test.com");
-        String url = "http://localhost:" + port + "/user";
+        TodoDto expected = new TodoDto(0, "2022-09-02 05:05:22", null,"hi nice to meet you", "lee");
+        String url = "http://localhost:" + port + "/todo";
 
         // when
         Response actual = postJson(url, new StringEntity(Mapper.write(expected)));
-        userService.save(expected.toEntity());
+        todoService.save(expected.toEntity());
 
         // then
         assertThat(actual.code).isEqualTo(200);
-        assertThat(Mapper.read(actual.body, UserDto.class))
+        assertThat(Mapper.read(actual.body, TodoDto.class))
                 .usingRecursiveComparison()
-                .ignoringFields("id")
+                .ignoringFields("todoId")
                 .isEqualTo(expected);
     }
 
@@ -204,7 +190,6 @@ class PostUserTest {
             }
         }
     }
-
     private int getRandomPort() {
         return new SecureRandom().nextInt(64511) + 1024;
     }

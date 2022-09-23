@@ -37,7 +37,7 @@ public class TodoServicePostgreSQLImpl implements TodoService {
 
             Timestamp creatAt = Timestamp.valueOf(todoEntity.getCreatedAt());
 
-            int affectRows = statement.executeUpdate(TodoServicePostgreSqlQuerys.insertTodo(creatAt, todoEntity.getContent(), todoEntity.isCompleted()), statement.RETURN_GENERATED_KEYS);
+            int affectRows = statement.executeUpdate(TodoServicePostgreSqlQuerys.insertTodo(creatAt, todoEntity.getContent(), todoEntity.getWriter()), statement.RETURN_GENERATED_KEYS);
 
             if (affectRows == 0) {
                 return null;
@@ -72,7 +72,7 @@ public class TodoServicePostgreSQLImpl implements TodoService {
                     todoEntity.setCreatedAt(resultSet.getString("createAt"));
                     todoEntity.setModifiedAt(resultSet.getString("modifiedAt"));
                     todoEntity.setContent(resultSet.getString("content"));
-                    todoEntity.setCompleted(resultSet.getBoolean("completed"));
+                    todoEntity.setWriter(resultSet.getString("writer"));
                     return todoEntity;
                 }
             } else {
@@ -105,7 +105,7 @@ public class TodoServicePostgreSQLImpl implements TodoService {
         if (todoEntity != null) {
             try (Connection connection = dbcp.getConnection()) {
                 Timestamp modifiedAt = Timestamp.valueOf(todoEntity.getModifiedAt());
-                PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.updateTodo(todoEntity.getTodoId(), modifiedAt, todoEntity.getContent(), todoEntity.isCompleted()));
+                PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.updateTodo(todoEntity.getTodoId(), modifiedAt, todoEntity.getContent(), todoEntity.getWriter()));
 
                 int affectRow = preparedStatement.executeUpdate();
 

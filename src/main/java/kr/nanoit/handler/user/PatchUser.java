@@ -46,7 +46,6 @@ public void handle(HttpExchange exchange) throws IOException {
 
         String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));
         UserDto userDto = getRead(body);
-        log.info(String.valueOf(userDto));
 
         if (userDto == null) {
             badRequest(exchange, "parse failed");

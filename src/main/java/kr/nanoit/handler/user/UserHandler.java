@@ -1,19 +1,16 @@
 package kr.nanoit.handler.user;
 
-import static kr.nanoit.utils.GlobalVariable.APPLICATION_JSON_CHARSET_UTF_8;
-import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
-import static kr.nanoit.utils.GlobalVariable.METHOD_DELETE;
-import static kr.nanoit.utils.GlobalVariable.METHOD_GET;
-import static kr.nanoit.utils.GlobalVariable.METHOD_PATCH;
-import static kr.nanoit.utils.GlobalVariable.METHOD_POST;
-
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kr.nanoit.db.impl.userservice.UserService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+import static kr.nanoit.utils.GlobalVariable.*;
+
+@Slf4j
 public class UserHandler implements HttpHandler {
 
     private final UserService userService;
@@ -34,16 +31,26 @@ public class UserHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-        if (METHOD_POST.equals(method)) {
-            postUser.handle(exchange);
-        } else if (METHOD_GET.equals(method)) {
-            getUser.handle(exchange);
-        } else if (METHOD_PATCH.equals(method)) {
-            patchUser.handle(exchange);
-        } else if (METHOD_DELETE.equals(method)) {
-            deleteUser.handle(exchange);
-        } else {
-            badRequest(exchange);
+        try {
+            switch (method) {
+                case METHOD_GET:
+                    getUser.handle(exchange);
+                    break;
+                case METHOD_POST:
+                    postUser.handle(exchange);
+                    break;
+                case METHOD_DELETE:
+                    deleteUser.handle(exchange);
+                    break;
+                case METHOD_PATCH:
+                    patchUser.handle(exchange);
+                    break;
+                default:
+                    badRequest(exchange);
+                    break;
+            }
+        } catch (Exception e) {
+            log.error("handler error", e);
         }
     }
 

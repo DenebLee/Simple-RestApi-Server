@@ -1,12 +1,13 @@
-package kr.nanoit.handler.user;
+package kr.nanoit.handler.todo;
 
 import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import kr.nanoit.db.impl.userservice.UserService;
-import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
-import kr.nanoit.object.entity.UserEntity;
+import kr.nanoit.object.entity.TodoEntity;
 import lombok.Getter;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -22,45 +23,45 @@ import java.security.SecureRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("GET /user 테스트")
-class GetUserTest {
 
+@DisplayName("DELETE /todo 테스트")
+@Slf4j
+public class DeleteTodoTest {
     private SandBoxHttpServer httpServer;
     private UserService userService;
     private TodoService todoService;
     private int port;
 
-    // 테스트 메소드 한개당 새롭게 실행됨
     @BeforeEach
     void setUp() throws IOException {
         port = getRandomPort();
-        userService = new UserServiceTestImpl();
+        todoService = new TodoServiceTestImpl();
         httpServer = new SandBoxHttpServer("localhost", port, userService, todoService);
         httpServer.start();
     }
 
     @Test
-    @DisplayName("GET / user -> (쿼리 스트링이 NULL) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("DELETE / todo-> (쿼리스트링이 NULL) 로 요청 했을때 BAD REQUEST가 내려와야 함")
     void should_return_bad_request_when_null_query_string() throws IOException {
         // given
-        String url = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/todo";
 
-        // whendv
-        Response actual = get(url);
+        // when
+        Response actual = delete(url);
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("null: query.id");
+        assertThat(actual.body).contains("not found: query.id");
     }
 
     @Test
-    @DisplayName("GET /user -> (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("DELETE / todo-> (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_many_query_string() throws IOException {
         // given
-        String url = "http://localhost:" + port + "/user?id=1&id=4";
+        String url = "http://localhost:" + port + "/todo?id=1&id=4";
 
         // when
-        Response actual = get(url);
+        Response actual = delete(url);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -68,13 +69,13 @@ class GetUserTest {
     }
 
     @Test
-    @DisplayName("GET / user -> (쿼리 스트링 ID가 -1일때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
-    void should_return_bad_request_when_query_string_is_minus() throws IOException {
+    @DisplayName("DELETE / todo-> (쿼리 스트링 ID가 -1일때) 로 요청했을때 BAD REQUEST가 내려와야 함")
+    void should_return_bad_request_when_query_string_is_minus() throws IOException{
         // given
-        String url = "http://localhost:" + port + "/user?id=-1";
+        String url = "http://localhost:" + port + "/todo?id=-1";
 
         // when
-        Response actual = get(url);
+        Response actual = delete(url);
 
         // then
         assertThat(actual.code).isEqualTo(400);
@@ -82,38 +83,43 @@ class GetUserTest {
     }
 
     @Test
-    @DisplayName("GET / user ->  (유저가 NOT FOUND) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
-    void should_return_bad_request_when_user_not_found() throws IOException {
+    @DisplayName("DELETE / todo-> (유저가 NOT FOUND) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    void should_return_bad_request_when_todo_not_found() throws IOException {
         // given
-        String url = "http://localhost:" + port + "/user?id=21";
+        String url = "http://localhost:" + port + "/todo?id=12";
 
         // when
-        Response actual = get(url);
+        Response actual = delete(url);
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.id");
+        assertThat(actual.body).contains("not found: todo.id");
     }
 
     @Test
-    @DisplayName("GET / user ->  요청했을때 OK, USER 가 내려와야 됨")
-    void should_return_ok_when_user() throws IOException {
+    @DisplayName("DELETE / todo-> 요청했을때 OK, 요청한 todo 가 삭제되어야 함")
+    void should_return_ok_when_todo_delete() throws IOException {
         // given
-        UserEntity user = userService.save(new UserEntity(0, "test01", "123123", "test@test.com"));
-        String url = "http://localhost:" + port + "/user?id=1";
+        TodoEntity todoData = new TodoEntity(0, "2022-12-12 12:12:12", "2022-12-12 12:12:12", "안녕하세요","lee");
+        TodoEntity expected = todoService.save(todoData);
+        String url = "http://localhost:" + port + "/todo?id=1";
 
         // when
-        Response actual = get(url);
-
+        Response responseActual = delete(url);
+        boolean actual = todoService.deleteById(expected.getTodoId());
         // then
-        assertThat(actual.code).isEqualTo(200);
-        assertThat(actual.body).contains("test01", "123123", "test@test.com");
+
+        assertThat(actual).isTrue();
+        assertThat(todoService.findById(expected.getTodoId())).isNull();
+        assertThat(responseActual.code).isEqualTo(200);
+        assertThat(responseActual.body).contains("OK");
     }
 
-    private Response get(String uri) throws IOException {
+
+    private Response delete(String uri) throws IOException {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(uri);
-            try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
+            HttpDelete httpDelete = new HttpDelete(uri);
+            try (CloseableHttpResponse response = httpclient.execute(httpDelete)) {
                 return new Response(response.getCode(), EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8));
             } catch (ParseException e) {
                 throw new RuntimeException(e);

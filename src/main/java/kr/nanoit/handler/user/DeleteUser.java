@@ -41,7 +41,7 @@ public final class DeleteUser {
                 return;
             }
 
-            int userId = Integer.parseInt((queryStrings.get("id").get(0)));
+            int userId = Integer.parseInt(queryStrings.get("id").get(0));
 
             if (userId <= 0) {
                 badRequest(exchange, "zero value: query.id");

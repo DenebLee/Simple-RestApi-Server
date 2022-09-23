@@ -1,5 +1,6 @@
 package kr.nanoit.object.entity;
 
+import kr.nanoit.object.dto.TodoDto;
 import lombok.*;
 
 @Getter
@@ -12,5 +13,9 @@ public class TodoEntity {
     private String createdAt;
     private String modifiedAt;
     private String content;
-    private boolean completed;
+    private String writer;
+
+    public TodoDto toDto() {
+        return new TodoDto(todoId, createdAt, modifiedAt, content, writer);
+    }
 }

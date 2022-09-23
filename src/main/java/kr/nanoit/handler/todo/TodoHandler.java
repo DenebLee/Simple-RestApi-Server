@@ -4,7 +4,6 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kr.nanoit.db.impl.todoservice.TodoService;
-import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -17,14 +16,14 @@ public class TodoHandler implements HttpHandler {
     private final GetTodo getTodo;
     private final PostTodo postTodo;
     private final PatchTodo patchTodo;
-    private final DeleteTodo deleteToto;
+    private final DeleteTodo deleteTodo;
 
-    public TodoHandler() {
-        todoService = new TodoServiceTestImpl();
-        getTodo = new GetTodo(todoService);
-        postTodo = new PostTodo(todoService);
-        deleteToto = new DeleteTodo(todoService);
-        patchTodo = new PatchTodo(todoService);
+    public TodoHandler(TodoService todoService) {
+        this.todoService = todoService;
+        this.getTodo = new GetTodo(todoService);
+        this.postTodo = new PostTodo(todoService);
+        this.deleteTodo = new DeleteTodo(todoService);
+        this.patchTodo = new PatchTodo(todoService);
     }
 
     @Override
@@ -34,12 +33,16 @@ public class TodoHandler implements HttpHandler {
             switch (method) {
                 case METHOD_GET:
                     getTodo.handle(exchange);
+                    break;
                 case METHOD_POST:
                     postTodo.handle(exchange);
+                    break;
                 case METHOD_DELETE:
-                    deleteToto.handle(exchange);
+                    deleteTodo.handle(exchange);
+                    break;
                 case METHOD_PATCH:
                     patchTodo.handle(exchange);
+                    break;
                 default:
                     badRequest(exchange);
                     break;

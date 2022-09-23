@@ -1,5 +1,7 @@
 package kr.nanoit;
 
+import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
 import lombok.Getter;
@@ -34,7 +36,8 @@ class SandBoxHttpServerTest {
     void should_created_http_server() throws IOException {
         // given
         UserService userService = new UserServiceTestImpl();
-        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port, userService);
+        TodoService todoService = new TodoServiceTestImpl();
+        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port, userService,todoService);
         expected.start();
 
         // when

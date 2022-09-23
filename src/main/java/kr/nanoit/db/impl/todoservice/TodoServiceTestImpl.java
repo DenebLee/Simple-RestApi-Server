@@ -32,7 +32,8 @@ public class TodoServiceTestImpl implements TodoService {
 
     @Override
     public boolean deleteById(long todoId) {
-        return todoList.remove(todoId) != null;
+        todoList.remove(todoId);
+        return true;
     }
 
     @Override

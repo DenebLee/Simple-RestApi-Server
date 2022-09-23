@@ -1,6 +1,7 @@
 package kr.nanoit.handler.user;
 
 import kr.nanoit.SandBoxHttpServer;
+import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
 import kr.nanoit.object.entity.UserEntity;
@@ -28,20 +29,20 @@ class DeleteUserTest {
 
     private SandBoxHttpServer httpServer;
     private UserService userService;
+    private TodoService todoService;
     private int port;
 
-    // 테스트 메소드 한개당 새롭게 실행됨
     @BeforeEach
     void setUp() throws IOException {
         port = getRandomPort();
         userService = new UserServiceTestImpl();
-        httpServer = new SandBoxHttpServer("localhost", port, userService);
+        httpServer = new SandBoxHttpServer("localhost", port, userService, todoService);
         httpServer.start();
     }
 
 
     @Test
-    @DisplayName("Delete /user (쿼리 스트링이 NULL) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("DELETE / user-> (쿼리 스트링이 NULL) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_null_query_string() throws IOException {
         // given
         String url = "http://localhost:" + port + "/user";
@@ -55,7 +56,7 @@ class DeleteUserTest {
     }
 
     @Test
-    @DisplayName("Delete /user (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("DELETE / user-> (쿼리 스트링이 1개가 아닐때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_many_query_string() throws IOException {
         // given
         String url = "http://localhost:" + port + "/user?id=1&id=4";
@@ -69,11 +70,10 @@ class DeleteUserTest {
     }
 
     @Test
-    @DisplayName("Delete /user (쿼리 스트링 ID가 -1일때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("DELETE / user-> (쿼리 스트링 ID가 -1일때) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_query_string_is_minus() throws IOException {
         // given
         String url = "http://localhost:" + port + "/user?id=-1";
-
 
         // when
         Response actual = delete(url);
@@ -84,7 +84,7 @@ class DeleteUserTest {
     }
 
     @Test
-    @DisplayName("Delete /user?id=1 (유저가 NOT FOUND) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
+    @DisplayName("DELETE / user-> (유저가 NOT FOUND) 로 요청했을때 BAD REQUEST 가 내려와야 됨")
     void should_return_bad_request_when_user_not_found() throws IOException {
         // given
         String url = "http://localhost:" + port + "/user?id=1";
@@ -98,7 +98,7 @@ class DeleteUserTest {
     }
 
     @Test
-    @DisplayName("Delete /user?id=1 로 요청했을때 OK, 요청한 아이디의 유저가 삭제되어야 함")
+    @DisplayName("DELETE / user-> 요청했을때 OK, 요청한 아이디의 유저가 삭제되어야 함")
     void should_return_ok_when_user_delete() throws IOException {
         // given
         UserEntity userData = new UserEntity(0, "test01", "123123", "test01@test.com");

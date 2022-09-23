@@ -69,8 +69,6 @@ public final class PostUser {
             }
 
             UserEntity userEntity = userService.save(userDto.toEntity());
-            System.out.println(userDto);
-            System.out.println(userEntity);
 
             responseOk(exchange, Mapper.writePretty(userEntity.toDto()).getBytes(StandardCharsets.UTF_8));
 

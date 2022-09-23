@@ -26,7 +26,7 @@ class TodoServiceTestImplTest {
     void should_saved() {
         // given
         TodoService service = TodoService.createTest();
-        TodoEntity expected = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo", false);
+        TodoEntity expected = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo", "lee");
 
         // when
         TodoEntity actual = service.save(expected);
@@ -45,7 +45,7 @@ class TodoServiceTestImplTest {
     void should_get() {
         // given
         TodoService todoService = TodoService.createTest();
-        TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo",true);
+        TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
         TodoEntity expected = todoService.save(testData);
 
         // when
@@ -65,7 +65,7 @@ class TodoServiceTestImplTest {
     void should_delete() {
         // given
         TodoService todoService = TodoService.createTest();
-        TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo",false);
+        TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
         TodoEntity expected = todoService.save(testData);
 
         // when
@@ -81,10 +81,10 @@ class TodoServiceTestImplTest {
     void should_update() {
         // given
         TodoService todoService = TodoService.createTest();
-        TodoEntity originalData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo",true);
+        TodoEntity originalData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
 
         TodoEntity originalExpected = todoService.save(originalData);
-        TodoEntity updateExpected = new TodoEntity(originalExpected.getTodoId(), OffsetDateTime.now().plusDays(1).toString(), OffsetDateTime.now().plusDays(1).toString(), "Second Test Todo",false);
+        TodoEntity updateExpected = new TodoEntity(originalExpected.getTodoId(), OffsetDateTime.now().plusDays(1).toString(), OffsetDateTime.now().plusDays(1).toString(), "Second Test Todo","lee");
 
         // when
         TodoEntity actual = todoService.update(updateExpected);
@@ -100,7 +100,7 @@ class TodoServiceTestImplTest {
     void should_contain_key() {
         // given
         TodoService todoService = TodoService.createTest();
-        TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo", true);
+        TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo", "lee");
         TodoEntity expected = todoService.save(testData);
 
         // when

@@ -1,6 +1,7 @@
 package kr.nanoit;
 
 import com.sun.net.httpserver.HttpServer;
+import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.handler.HealthHandler;
 import kr.nanoit.handler.todo.TodoHandler;
@@ -15,11 +16,11 @@ public class SandBoxHttpServer {
 
   private final HttpServer httpServer;
 
-  public SandBoxHttpServer(String host, int port, UserService userService) throws IOException {
+  public SandBoxHttpServer(String host, int port, UserService userService, TodoService todoService) throws IOException {
     this.httpServer = HttpServer.create(new InetSocketAddress(host, port), 0);
     this.httpServer.createContext("/user", new UserHandler(userService));
     this.httpServer.createContext("/health", new HealthHandler());
-    this.httpServer.createContext("/todo", new TodoHandler());
+    this.httpServer.createContext("/todo", new TodoHandler(todoService));
   }
 
   public void start() {
