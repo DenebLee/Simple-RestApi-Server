@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DELETE /todo 테스트")
 @Slf4j
-public class DeleteTodoTest {
+ class DeleteTodoTest {
     private SandBoxHttpServer httpServer;
     private UserService userService;
     private TodoService todoService;

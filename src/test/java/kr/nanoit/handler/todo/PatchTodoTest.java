@@ -1,11 +1,11 @@
-package kr.nanoit.handler.user;
+package kr.nanoit.handler.todo;
 
 import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import kr.nanoit.db.impl.userservice.UserService;
-import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
-import kr.nanoit.object.dto.UserDto;
-import kr.nanoit.object.entity.UserEntity;
+import kr.nanoit.object.dto.TodoDto;
+import kr.nanoit.object.entity.TodoEntity;
 import kr.nanoit.utils.Mapper;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
@@ -27,8 +27,8 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@DisplayName("PATCH /user 테스트")
-class PatchUserTest {
+@DisplayName("PATCH / todo 테스트")
+class PatchTodoTest {
     private SandBoxHttpServer httpServer;
     private UserService userService;
     private TodoService todoService;
@@ -37,18 +37,19 @@ class PatchUserTest {
     @BeforeEach
     void setUp() throws IOException {
         port = getRandomPort();
-        userService = new UserServiceTestImpl();
+        todoService = new TodoServiceTestImpl();
         httpServer = new SandBoxHttpServer("localhost", port, userService, todoService);
         httpServer.start();
     }
 
+
     @Test
-    @DisplayName("PATCH / header = content type 을 요청했을때 올바르지 않으면 badRequest 가 떨어져야됨")
+    @DisplayName("PATCH / todo-> content Type을 요청했을 때 올바르지 않으면 badRequest가 떨어져야 함")
     void should_return_bad_request_when_uncorrected_content_type_header() throws IOException {
         // given
         String contentType = "xontent-type";
         String headerValue = "application/json";
-        String url = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/todo";
 
         // when
         Response actual = patch(url, contentType, headerValue);
@@ -60,10 +61,10 @@ class PatchUserTest {
     }
 
     @Test
-    @DisplayName("PATCH / header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
+    @DisplayName("PATCH / todo-> content type 을 요청했을때 비어있으면 badRequest가 떨어져야 함")
     void should_return_bad_request_when_empty_content_type_header() throws IOException {
         // given
-        String url = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/todo";
 
         // when
         Response actual = patch(url, null, null);
@@ -74,12 +75,12 @@ class PatchUserTest {
     }
 
     @Test
-    @DisplayName("PATCH / header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
+    @DisplayName("PATCH / todo-> header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
     void should_return_bad_request_when_not_application_json() throws IOException {
         // given
         String contentType = "content-type";
         String headerValue = "application/xml";
-        String url = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/todo";
 
         // when
         Response actual = patch(url, contentType, headerValue);
@@ -90,11 +91,11 @@ class PatchUserTest {
     }
 
     @Test
-    @DisplayName("PATCH / UserDto 가 null 일 경우 badRequest 떨어져야됨")
-    void should_return_bad_request_when_userdto_is_null() throws IOException {
+    @DisplayName("PATCH / todo-> TodoDto 가 null 일 경우 badRequest 떨어져야됨")
+    void should_return_bad_request_when_tododto_is_null() throws IOException {
         // given
         String json = "";
-        String url = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -106,11 +107,11 @@ class PatchUserTest {
     }
 
     @Test
-    @DisplayName("PATCH / id 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_id_is_null() throws IOException {
+    @DisplayName("PATCH / todo-> createdAt 이  null 일 경우 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_createdAt_is_null() throws IOException {
         // given
-        String json = "{\"username\": \"lee\" ,\"password\": \"123123\" , \"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
+        String json = "{\"modifiedAt\": \"2022-02-02 12:12:12\" ,\"content\": \"안녕하세요 수정 전입니다\" , \"writer\" : \"Leejeongseob\"}";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -118,15 +119,15 @@ class PatchUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.id");
+        assertThat(actual.body).contains("not found: createdAt");
     }
 
     @Test
-    @DisplayName("PATCH / username 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_username_is_null() throws IOException {
+    @DisplayName("PATCH / todo-> content 이  null 일 경우 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_content_is_null() throws IOException {
         // given
-        String json = "{\"id\": 2, \"password\": \"123123\" , \"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
+        String json = "{\"createdAt\": \"2022-02-02 12:12:12\" ,\"modifiedAt\": \"2022-02-02 12:13:13\" , \"writer\" : \"Leejeongseob\"}";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -134,15 +135,15 @@ class PatchUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.username");
+        assertThat(actual.body).contains("not found: content");
     }
 
     @Test
-    @DisplayName("PATCH / password 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_password_is_null() throws IOException {
+    @DisplayName("PATCH / todo-> modifiedAt 이  null 일 경우 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_modifiedAt_is_null() throws IOException {
         // given
-        String json = "{\"id\": 2, \"username\": \"lee\" ,\"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
+        String json = "{\"createdAt\": \"2022-02-02 12:12:12\" ,\"content\": \"안녕하세요 수정 전입니다\" , \"writer\" : \"Leejeongseob\"}";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -150,15 +151,15 @@ class PatchUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.password");
+        assertThat(actual.body).contains("not found: modified");
     }
 
     @Test
-    @DisplayName("PATCH / email 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_email_is_null() throws IOException {
+    @DisplayName("PATCH / todo-> writer 이  null 일 경우 badRequest 가 떨어져야됨")
+    void should_return_bad_request_when_writer_is_null() throws IOException {
         // given
-        String json = "{\"id\": 2, \"username\": \"lee\" ,\"password\": \"123123\"}";
-        String url = "http://localhost:" + port + "/user";
+        String json = "{\"createdAt\": \"2022-02-02 12:12:12\" ,\"modifiedAt\": \"2022-03-03 12:12:13\" , \"content\" : \"안녕하세요 수정 전입니다\"}";
+        String url = "http://localhost:" + port + "/todo";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -166,27 +167,28 @@ class PatchUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.email");
+        assertThat(actual.body).contains("not found: writer");
     }
 
     @Test
-    @DisplayName("PATCH /user 유저 정보 수정 요청을 했을때 정상이면 요청했던 USER 정보가 내려와야 됨")
-    void should_return_ok_when_user_patch() throws IOException {
+    @DisplayName("PATCH / todo-> todo 정보 수정 요청을 했을때 정상이면 요청했던 TODO 정보가 내려와야 함")
+    void should_return_ok_when_todo_patch() throws IOException{
         // given
-        UserEntity originalUserData = userService.save(new UserEntity(0, "test01", "123123", "test01@test.com"));
-        UserDto expected = new UserDto(1, "leejeongseob", "123123", "test@test.com");
-        String url = "http://localhost:" + port + "/user";
+        TodoEntity originalTodoData = todoService.save(new TodoEntity(0,"2022-03-03 12:12:12", "2022-04-04 12:12:12", "before modified", "lee"));
+        TodoDto expected = new TodoDto(1, "2022-03-03 12:12:12", "2022-04-04 12:12:12", "after modified ", "lee");
+        String url = "http://localhost:" + port + "/todo";
 
         // when
         Response actual = patchJson(url, new StringEntity(Mapper.write(expected)));
-        userService.update(expected.toEntity());
+        todoService.update(expected.toEntity());
 
         // then
         assertThat(actual.code).isEqualTo(200);
-        assertThat(Mapper.read(actual.body, UserDto.class))
+        assertThat(Mapper.read(actual.body, TodoDto.class))
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
+
 
 
     private Response patch(String uri, String contentType, String value) throws IOException {
@@ -229,8 +231,8 @@ class PatchUserTest {
 
         public Response(int code, String header, String body) {
             this.code = code;
-            this.body = body;
             this.header = header;
+            this.body = body;
         }
     }
 }

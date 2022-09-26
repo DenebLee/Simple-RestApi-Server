@@ -59,10 +59,16 @@ public class PatchTodo {
                 return;
             }
 
-            if (todoDto.getModified() == null) {
+            if (todoDto.getModifiedAt() == null) {
                 badRequest(exchange, "not found: modifiedTime");
                 return;
             }
+
+            if (todoDto.getWriter() == null) {
+                badRequest(exchange, "not found: writer");
+                return;
+            }
+
 
             TodoEntity todoEntity = todoService.update(todoDto.toEntity());
 

@@ -11,11 +11,11 @@ import lombok.*;
 public class TodoDto {
     private long todoId;
     private String createdAt;
-    private String modified;
+    private String modifiedAt;
     private String content;
     private String writer;
 
     public TodoEntity toEntity() {
-        return new TodoEntity(todoId, createdAt, modified, content, writer);
+        return new TodoEntity(todoId, createdAt, modifiedAt, content, writer);
     }
 }
