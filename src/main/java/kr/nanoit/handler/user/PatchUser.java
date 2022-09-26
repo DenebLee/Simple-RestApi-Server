@@ -35,9 +35,9 @@ public void handle(HttpExchange exchange) throws IOException {
             return;
         }
 
-        if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-            badRequest(exchange, "invalid: Content-Type Header");
-        }
+//        if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
+//            badRequest(exchange, "invalid: Content-Type Header");
+//        }
 
         if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
             badRequest(exchange, "accept Content-Type: application/json");

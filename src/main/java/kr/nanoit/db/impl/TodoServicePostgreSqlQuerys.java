@@ -9,7 +9,7 @@ public final class TodoServicePostgreSqlQuerys {
             " createAt TIMESTAMP, " +
             " modifiedAt TIMESTAMP, " +
             " content VARCHAR(512), " +
-            " completed VARCHAR(64) NOT NULL, " +
+            " writer VARCHAR(64) NOT NULL, " +
             " PRIMARY KEY ( id ))";
 
     private TodoServicePostgreSqlQuerys() {

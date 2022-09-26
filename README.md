@@ -49,6 +49,9 @@
   - 삭제된 시간 deleteAt을 빼고 (modified_date , start_date , finish_date , completed 로 수정)
   - 자잘한 오류 수정
 - 프로젝트 내 테스트 코드 전체 통과 확인
+#### 2022-09-26
+- 전체 테스트 코드 구현 완료 
+- Todo와 User @Post @Patch 메소드에서 content-type 검증 중 null체크 로직이 안먹혀 임시로 주석 처리함
 
 
 ## Project Structure

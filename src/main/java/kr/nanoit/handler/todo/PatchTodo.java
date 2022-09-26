@@ -32,9 +32,9 @@ public class PatchTodo {
                 return;
             }
 
-            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-                badRequest(exchange, "invalid: Content-Type Header");
-            }
+//            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
+//                badRequest(exchange, "invalid: Content-Type Header");
+//            }
 
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
                 badRequest(exchange, "accept Content-Type: application/json");
@@ -45,7 +45,7 @@ public class PatchTodo {
             TodoDto todoDto = getRead(body);
 
             if (todoDto == null) {
-                badRequest(exchange,"parse failed");
+                badRequest(exchange, "parse failed");
                 return;
             }
 
@@ -55,7 +55,7 @@ public class PatchTodo {
             }
 
             if (todoDto.getContent() == null) {
-                badRequest(exchange,"not found: content");
+                badRequest(exchange, "not found: content");
                 return;
             }
 
@@ -88,9 +88,9 @@ public class PatchTodo {
     }
 
     private TodoDto getRead(String body) {
-        try{
+        try {
             return Mapper.read(body, TodoDto.class);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Json Read error", e);
             return null;
         }

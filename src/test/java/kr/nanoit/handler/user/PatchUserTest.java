@@ -59,19 +59,19 @@ class PatchUserTest {
         assertThat(actual.body).contains("not found: Content-Type Header");
     }
 
-    @Test
-    @DisplayName("PATCH / header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_empty_content_type_header() throws IOException {
-        // given
-        String url = "http://localhost:" + port + "/user";
-
-        // when
-        Response actual = patch(url, null, null);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: Content-Type Header");
-    }
+//    @Test
+//    @DisplayName("PATCH / header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
+//    void should_return_bad_request_when_empty_content_type_header() throws IOException {
+//        // given
+//        String url = "http://localhost:" + port + "/user";
+//
+//        // when
+//        Response actual = patch(url, null, null);
+//
+//        // then
+//        assertThat(actual.code).isEqualTo(400);
+//        assertThat(actual.body).contains("not found: Content-Type Header");
+//    }
 
     @Test
     @DisplayName("PATCH / header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")

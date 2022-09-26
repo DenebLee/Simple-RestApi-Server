@@ -31,10 +31,10 @@ public class PostTodo {
                 return;
             }
 
-            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-                badRequest(exchange, "invalid: Content-Type Header");
-                return;
-            }
+//            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
+//                badRequest(exchange, "invalid: Content-Type Header");
+//                return;
+//            }
 
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
                 badRequest(exchange, "accept Content-Type application/json");
