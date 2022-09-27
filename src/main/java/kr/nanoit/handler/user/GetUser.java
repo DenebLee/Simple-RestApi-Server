@@ -2,6 +2,8 @@ package kr.nanoit.handler.user;
 
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.userservice.UserService;
+import kr.nanoit.exception.DtoReadException;
+import kr.nanoit.exception.GetException;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.utils.ExchangeRawPrinter;
@@ -32,35 +34,31 @@ public class GetUser {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
 
             if (!queryStrings.containsKey("id")) {
-                badRequest(exchange, "null: query.id");
-                return;
+                throw new GetException("null: query.id");
             }
 
             if (queryStrings.get("id").size() != 1) {
-                badRequest(exchange, "invalid: query.id");
-                return;
+                throw new GetException("invalid: query.id");
             }
 
             int userId = Integer.parseInt(queryStrings.get("id").get(0));
 
             if (userId <= 0) {
-                badRequest(exchange, "zero value: query.id");
-                return;
+                throw new GetException("zero value: query.id");
             }
 
             if (!userService.containsById(userId)) {
-                badRequest(exchange, "not found: user.id");
-                return;
+                throw new GetException("not found: user.id");
             }
 
             UserDto userDto = userService.findById(userId).toDto();
 
             if (userDto == null) {
-                internalServerError(exchange, "get user query failed: user.id=" + userId);
-                return;
+                throw new DtoReadException("get user query failed: user.id=" + userId);
             }
-
             responseOk(exchange, Mapper.writePretty(userDto).getBytes(StandardCharsets.UTF_8));
+        } catch (GetException | DtoReadException e) {
+            badRequest(exchange, e.getMessage());
         } catch (Exception e) {
             log.error("get handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

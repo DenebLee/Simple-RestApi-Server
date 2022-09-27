@@ -30,4 +30,7 @@ public final class TodoServicePostgreSqlQuerys {
     public static String updateTodo(long id, Timestamp modifiedAt, String content, String writer) {
         return "UPDATE todo SET modifiedAt = '" + modifiedAt + "', content = '" + content + "' , writer = '" + writer + "' WHERE id = '" + id + "'";
     }
+    public static String containsById(long todoId) {
+        return "SELECT COUNT(*) AS COUNT FROM users WHERE id = " + todoId;
+    }
 }

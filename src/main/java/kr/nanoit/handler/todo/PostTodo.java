@@ -3,6 +3,8 @@ package kr.nanoit.handler.todo;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.exception.CreateFailedException;
+import kr.nanoit.exception.TodoBadRequestException;
 import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.object.entity.TodoEntity;
 import kr.nanoit.utils.Mapper;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 
 import static kr.nanoit.handler.common.HandlerUtil.badRequest;
 import static kr.nanoit.handler.common.HandlerUtil.responseOk;
@@ -24,21 +27,16 @@ public class PostTodo {
         this.todoService = todoService;
     }
 
+    // 무조건 여기서 결과값이 내려가야됨,
+    // 무시되거나 리스폰스가 없거나 에러가 발생해서 상위 호출자에게 넘어가면 안됨
     public void handle(HttpExchange exchange) {
         try {
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
-                badRequest(exchange, "not found: Content-Type Header");
-                return;
+                throw new TodoBadRequestException("not found: Content-Type Header");
             }
 
-//            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-//                badRequest(exchange, "invalid: Content-Type Header");
-//                return;
-//            }
-
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                badRequest(exchange, "accept Content-Type application/json");
-                return;
+                throw new TodoBadRequestException("accept Content-Type application/json");
             }
 
             String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody()));
@@ -46,24 +44,31 @@ public class PostTodo {
             System.out.println(todoDto);
 
             if (todoDto == null) {
-                badRequest(exchange, "parse failed");
-                return;
+                throw new TodoBadRequestException("parse failed");
             }
 
             if (todoDto.getCreatedAt() == null) {
-                badRequest(exchange, "not Found : Created Time");
-                return;
+                throw new TodoBadRequestException("not Found : Created Time");
             }
 
             if (todoDto.getContent() == null) {
-                badRequest(exchange, "not Found : Content");
-                return;
+                throw new TodoBadRequestException("not Found : Content");
             }
 
             TodoEntity todoEntity = todoService.save(todoDto.toEntity());
 
             responseOk(exchange, Mapper.writePretty(todoEntity.toDto()).getBytes(StandardCharsets.UTF_8));
 
+        } catch (TodoBadRequestException e) {
+            badRequest(exchange, e.getReason());
+        } catch (SQLException e) {
+            if (e instanceof CreateFailedException) {
+                // TODO RESPONSE STATUS 변경
+                badRequest(exchange, ((CreateFailedException) e).getReason());
+            } else {
+                // TODO RESPONSE STATUS 변경
+                badRequest(exchange, e.getMessage());
+            }
         } catch (Exception e) {
             log.error("POST /todo handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

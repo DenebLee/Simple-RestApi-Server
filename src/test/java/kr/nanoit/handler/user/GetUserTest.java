@@ -45,7 +45,7 @@ class GetUserTest {
         // given
         String url = "http://localhost:" + port + "/user";
 
-        // whendv
+        // when
         Response actual = get(url);
 
         // then

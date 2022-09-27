@@ -4,6 +4,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.userservice.UserService;
+import kr.nanoit.exception.DtoReadException;
+import kr.nanoit.exception.PostException;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.object.entity.UserEntity;
 import kr.nanoit.utils.Mapper;
@@ -27,51 +29,50 @@ public final class PostUser {
 
 
     public void handle(HttpExchange exchange) {
+
         try {
             // debugging
 //            ExchangeRawPrinter.print(exchange);
 
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
-                badRequest(exchange, "not found: Content-Type Header");
-                return;
+                throw new PostException("not found: Content-Type Header");
             }
 
-//            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-//                badRequest(exchange, "invalid: Content-Type Header");
-//                return;
-//            }
-
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                badRequest(exchange, "accept Content-Type: application/json");
-                return;
+                throw new PostException("accept Content-Type: application/json");
             }
 
             String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));
             UserDto userDto = getRead(body);
             if (userDto == null) {
-                badRequest(exchange, "parse failed");
-                return;
+                throw new DtoReadException("parse failed");
+//                badRequest(exchange,PostException.);
+            }
+            if (userDto.getId() != 0) {
+                throw new DtoReadException("The id value should not be requested");
             }
 
             if (userDto.getUsername() == null) {
-                badRequest(exchange, "not found: user.username");
-                return;
+                throw new DtoReadException("not found: user.username");
             }
 
             if (userDto.getPassword() == null) {
-                badRequest(exchange, "not found: user.password");
-                return;
+                throw new DtoReadException("not found: user.password");
             }
 
             if (userDto.getEmail() == null) {
-                badRequest(exchange, "not found: user.email");
-                return;
+                throw new DtoReadException("not found: user.email");
             }
 
             UserEntity userEntity = userService.save(userDto.toEntity());
+            if (userEntity == null) {
+                internalServerError(exchange, "update query failed");
+            }
 
             responseOk(exchange, Mapper.writePretty(userEntity.toDto()).getBytes(StandardCharsets.UTF_8));
 
+        } catch (PostException | DtoReadException e) {
+            badRequest(exchange, e.getMessage());
         } catch (Exception e) {
             log.error("POST /user handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

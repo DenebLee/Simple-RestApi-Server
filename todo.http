@@ -1,0 +1,9 @@
+### POST
+POST http://localhost:7000/todo
+Content-Type: application/json
+
+{
+  "createdAt": "2022-09-27 10:49:49",
+  "content": "오늘은 코드 리뷰 날",
+  "writer": "조정하"
+}

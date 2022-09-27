@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.exception.TodoBadRequestException;
 import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.object.entity.TodoEntity;
 import kr.nanoit.utils.Mapper;
@@ -28,17 +29,11 @@ public class PatchTodo {
     public void handle(HttpExchange exchange) {
         try {
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
-                badRequest(exchange, "not found: Content-Type Header");
-                return;
+               throw new TodoBadRequestException("not found: Content-Type Header");
             }
 
-//            if (exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).isEmpty()) {
-//                badRequest(exchange, "invalid: Content-Type Header");
-//            }
-
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                badRequest(exchange, "accept Content-Type: application/json");
-                return;
+                throw new TodoBadRequestException("accept Content-Type: application/json");
             }
 
             String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));

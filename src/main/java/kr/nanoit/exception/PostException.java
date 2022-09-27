@@ -1,10 +1,10 @@
 package kr.nanoit.exception;
 
-public class DeleteException extends Exception {
+public class PostException extends Exception {
 
-    private String reason;
+    private final String reason;
 
-    public DeleteException(String reason) {
+    public PostException(String reason) {
         super(reason);
         this.reason = reason;
     }

@@ -1,0 +1,26 @@
+### POST
+POST http://localhost:7000/user
+Content-Type: application/json
+
+{
+  "username": "이정섭",
+  "email": "test@test4.com",
+  "password": "asdf"
+}
+
+### GET
+GET http://localhost:7000/user?id=2
+
+### PATCH
+PATCH http://localhost:7000/user
+Content-Type: application/json
+
+{
+  "id": 3,
+  "username": "조정하2",
+  "email": "cjh84872222@nanoit.kr",
+  "password": "asdfasdf"
+}
+
+### DELETE
+DELETE http://localhost:7000/user?id=2

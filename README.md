@@ -1,4 +1,14 @@
 # History
+
+## NEXT
+1. TODO API에 대한 유저 인증
+2. 로그인
+3. 세션 관리 또는 토큰 관리
+
+## USER
+- POST 중복 유저 생성
+- UPDATE ID 없을때 INTERNAL 에러 발생
+
 ## TODO
 1. HttpServer에 DB 연동
 2. UserHandler 오류 수정
@@ -38,7 +48,7 @@
 - Exception 관련 지식 습득
 #### 2022-09-20
 - UserServicePostgreSQLImpl 테스트 구현 완료 
-  - 도중 프로젝트 sdk꼬여서 시간이 올래걸림
+  - 도중 프로젝트 sdk 꼬여서 시간이 오래 걸림
 #### 2022-09-21
 - TodoServicePostgreSQLImpl 구현
   - @POST, @SAVE 구현
@@ -52,6 +62,13 @@
 #### 2022-09-26
 - 전체 테스트 코드 구현 완료 
 - Todo와 User @Post @Patch 메소드에서 content-type 검증 중 null체크 로직이 안먹혀 임시로 주석 처리함
+#### 2022-09-27
+- TodoDto, TodoEntity 수정 
+  - {modified_date , start_date , finish_date , completed} -> {createdAt, modifiedAt, content, writer}로 변경 
+- 각 로직에서 null로 처리했던 오류를 각 상황에 맞는 Exception 구현해서 던져줌
+- 테이블에 중복 userData가 들어가지 못하도록  email에 unique 조건을 걸어 중복 배제 
+  - 이에 따른 error 처리 해야됨 
+- 기존 로직에선 @UPDATE 시 user{username, password, email} 에 대한 값을 모두 받았지만 셋중 한개만 받아도 처리할 수 있게 수정
 
 
 ## Project Structure
