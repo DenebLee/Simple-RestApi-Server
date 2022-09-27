@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -81,7 +82,7 @@ class GetTodoTest {
 
     @Test
     @DisplayName("GET / todo -> 요청했을때 OK, TODO 가 내려와야 함")
-    void should_return_ok_when_todo() throws IOException {
+    void should_return_ok_when_todo() throws IOException, SQLException {
         // given
         TodoEntity todo = todoService.save(new TodoEntity(0, "2022-02-04 05:05:05", "2022-02-04 05:05:05","today i forgot my umbrella","lee"));
         String url = "http://localhost:" + port + "/todo?id=1";

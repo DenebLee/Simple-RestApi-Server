@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -146,7 +147,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
     @Test
     @DisplayName("POST / todo -> Todo를 등록했을 때  정상이면 요청한 Todo 정보가 내려와야 됨")
-    void should_return_ok_when_user() throws IOException {
+    void should_return_ok_when_user() throws IOException, SQLException {
         // given
         TodoDto expected = new TodoDto(0, "2022-09-02 05:05:22", null,"hi nice to meet you", "lee");
         String url = "http://localhost:" + port + "/todo";

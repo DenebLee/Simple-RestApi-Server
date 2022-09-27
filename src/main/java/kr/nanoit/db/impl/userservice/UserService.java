@@ -1,6 +1,7 @@
 package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.UserEntity;
 
 public interface UserService {
@@ -18,7 +19,7 @@ public interface UserService {
 
     boolean deleteById(long userId);
 
-    UserEntity update(UserEntity userEntity);
+    UserEntity update(UserEntity userEntity) throws UpdateException;
 
     boolean containsById(long id);
 }

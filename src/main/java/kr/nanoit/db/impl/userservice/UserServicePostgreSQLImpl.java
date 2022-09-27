@@ -37,7 +37,7 @@ public class UserServicePostgreSQLImpl implements UserService {
              PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.selectUser(userId))) {
             resultSet = preparedStatement.executeQuery();
 
-            if(resultSet != null){
+            if (resultSet != null) {
                 while (resultSet.next()) {
                     UserEntity userEntity = new UserEntity();
                     userEntity.setId(resultSet.getLong("id"));
@@ -46,7 +46,7 @@ public class UserServicePostgreSQLImpl implements UserService {
                     userEntity.setEmail(resultSet.getString("email"));
                     return userEntity;
                 }
-            }else {
+            } else {
                 throw new FindFailedException("not found result set");
 
             }
@@ -60,6 +60,7 @@ public class UserServicePostgreSQLImpl implements UserService {
     public UserEntity save(UserEntity userEntity) {
         try (Connection connection = dbcp.getConnection();
              Statement statement = connection.createStatement()) {
+            // TODO: 2022-09-27 중복된 값이 들어오면 exception처리 해줘야됨
             int affectedRows = statement.executeUpdate(UserServicePostgreSqlQuerys.insertUser(userEntity.getUsername(), userEntity.getPassword(), userEntity.getEmail()), statement.RETURN_GENERATED_KEYS);
 
             if (affectedRows == 0) {
@@ -97,14 +98,11 @@ public class UserServicePostgreSQLImpl implements UserService {
     }
 
     @Override
-    public UserEntity update(UserEntity userEntity) {
+
+    public UserEntity update(UserEntity userEntity) throws UpdateException {
         if (userEntity != null) {
             try (Connection connection = dbcp.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.updateUser(
-                         userEntity.getId(),
-                         userEntity.getUsername(),
-                         userEntity.getPassword(),
-                         userEntity.getEmail()))) {
+                 PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.updateUser(userEntity))) {
                 int affectRow = preparedStatement.executeUpdate();
 
                 if (affectRow == 0) {
@@ -116,11 +114,24 @@ public class UserServicePostgreSQLImpl implements UserService {
                 log.error("failed updated query", e);
             }
         }
-        return null;
+        throw new UpdateException("userEntity is null");
     }
 
     @Override
     public boolean containsById(long id) {
+        try (Connection connection = dbcp.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.containsById(id))) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    return resultSet.getInt("COUNT") == 1;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("failed updated query", e);
+        }
         return false;
     }
 }

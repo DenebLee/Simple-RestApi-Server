@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,20 +60,6 @@ class PatchTodoTest {
         assertThat(actual.header).isNotEqualTo(contentType);
         assertThat(actual.body).contains("not found: Content-Type Header");
     }
-
-//    @Test
-//    @DisplayName("PATCH / todo-> content type 을 요청했을때 비어있으면 badRequest 가 떨어져야 함")
-//    void should_return_bad_request_when_empty_content_type_header() throws IOException {
-//        // given
-//        String url = "http://localhost:" + port + "/todo";
-//
-//        // when
-//        Response actual = patch(url, null, null);
-//
-//        // then
-//        assertThat(actual.code).isEqualTo(400);
-//        assertThat(actual.body).contains("invalid: Content-Type Header");
-//    }
 
     @Test
     @DisplayName("PATCH / todo-> header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
@@ -172,9 +159,9 @@ class PatchTodoTest {
 
     @Test
     @DisplayName("PATCH / todo-> todo 정보 수정 요청을 했을때 정상이면 요청했던 TODO 정보가 내려와야 함")
-    void should_return_ok_when_todo_patch() throws IOException{
+    void should_return_ok_when_todo_patch() throws IOException, SQLException {
         // given
-        TodoEntity originalTodoData = todoService.save(new TodoEntity(0,"2022-03-03 12:12:12", "2022-04-04 12:12:12", "before modified", "lee"));
+        TodoEntity originalTodoData = todoService.save(new TodoEntity(0, "2022-03-03 12:12:12", "2022-04-04 12:12:12", "before modified", "lee"));
         TodoDto expected = new TodoDto(1, "2022-03-03 12:12:12", "2022-04-04 12:12:12", "after modified ", "lee");
         String url = "http://localhost:" + port + "/todo";
 
@@ -188,7 +175,6 @@ class PatchTodoTest {
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
-
 
 
     private Response patch(String uri, String contentType, String value) throws IOException {

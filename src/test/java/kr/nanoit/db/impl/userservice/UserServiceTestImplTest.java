@@ -1,6 +1,6 @@
 package kr.nanoit.db.impl.userservice;
 
-import kr.nanoit.db.impl.userservice.UserService;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -78,13 +78,13 @@ class UserServiceTestImplTest {
         assertThat(actual).isTrue();
         assertThat(userService.findById(expected.getId())).isNull();
     }
-
+// duplicate key value violates unique constraint "users_email_key"
     @Test
     @DisplayName("UserService UserEntity 정상적으로 수정 되는지")
-    void should_update(){
+    void should_update() throws UpdateException {
         // given
         UserEntity originalUserDataExpected = userService.save(createTestUserEntity());
-        UserEntity updateExpected = new UserEntity(originalUserDataExpected.getId(), "leejeongseob", "123123", "test@test.com");
+        UserEntity updateExpected = new UserEntity(originalUserDataExpected.getId(), null, "123123", "test@test.com");
 
         // when
         UserEntity actual = userService.update(updateExpected);

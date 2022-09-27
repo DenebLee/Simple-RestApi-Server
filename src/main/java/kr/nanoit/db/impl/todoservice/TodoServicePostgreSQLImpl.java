@@ -31,7 +31,7 @@ public class TodoServicePostgreSQLImpl implements TodoService {
 
 
     @Override
-    public TodoEntity save(TodoEntity todoEntity) {
+    public TodoEntity save(TodoEntity todoEntity) throws SQLException {
         try (Connection connection = dbcp.getConnection();
              Statement statement = connection.createStatement()) {
 
@@ -40,7 +40,7 @@ public class TodoServicePostgreSQLImpl implements TodoService {
             int affectRows = statement.executeUpdate(TodoServicePostgreSqlQuerys.insertTodo(creatAt, todoEntity.getContent(), todoEntity.getWriter()), statement.RETURN_GENERATED_KEYS);
 
             if (affectRows == 0) {
-                return null;
+                throw new SQLException("db error");
             }
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
@@ -53,14 +53,14 @@ public class TodoServicePostgreSQLImpl implements TodoService {
                     throw new CreateFailedException("not found result set");
                 }
             }
-        } catch (Exception e) {
-            log.error("failed saved query", e);
+        } catch (SQLException e) {
+            log.error("save query failed", e);
         }
         return null;
     }
 
     @Override
-    public TodoEntity findById(long todoId) {
+    public TodoEntity findById(long todoId) throws SQLException {
         ResultSet resultSet = null;
         try (Connection connection = dbcp.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.selectTodo(todoId))) {
@@ -78,8 +78,13 @@ public class TodoServicePostgreSQLImpl implements TodoService {
             } else {
                 throw new FindFailedException("not found result set");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             log.error("failed found query", e);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+                return null;
+            }
         }
         return null;
     }
@@ -123,6 +128,19 @@ public class TodoServicePostgreSQLImpl implements TodoService {
 
     @Override
     public boolean containsById(long todoId) {
+        try (Connection connection = dbcp.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.containsById(todoId))) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    return resultSet.getInt("COUNT") == 1;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("failed updated query", e);
+        }
         return false;
     }
 }

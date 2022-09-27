@@ -2,6 +2,7 @@ package kr.nanoit.handler.todo;
 
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
+import kr.nanoit.exception.DeleteException;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.object.dto.HttpResponseDto;
 import kr.nanoit.utils.Mapper;
@@ -22,40 +23,41 @@ import static kr.nanoit.utils.GlobalVariable.HTTP_OK;
 public class DeleteTodo {
     private final TodoService todoService;
 
-    public DeleteTodo(TodoService todoService) {this.todoService = todoService;}
+    public DeleteTodo(TodoService todoService) {
+        this.todoService = todoService;
+    }
 
     public void handle(HttpExchange exchange) {
-        try{
+        try {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
 
-            if(!queryStrings.containsKey("id")){
-                badRequest(exchange,"not found: query.id");
+            if (!queryStrings.containsKey("id")) {
+                throw new DeleteException("not found: query.id");
             }
 
             if (queryStrings.containsKey("id") && queryStrings.get("id").size() != 1) {
-                badRequest(exchange, "invalid: query.id");
-                return;
+                throw new DeleteException("invalid: query.id");
             }
 
             int todoId = Integer.parseInt(queryStrings.get("id").get(0));
 
-            if(todoId <= 0){
-                badRequest(exchange, "zero value: query.id");
-                return;
+            if (todoId <= 0) {
+                throw new DeleteException("zero value: query.id");
             }
 
-            if(!todoService.containsById(todoId)){
-                badRequest(exchange, "not found: todo.id");
-                return;
+            if (!todoService.containsById(todoId)) {
+                throw new DeleteException("not found: todo.id");
             }
 
             boolean isSuccess = todoService.deleteById(todoId);
 
-            if(isSuccess){
+            if (isSuccess) {
                 responseOk(exchange, Mapper.writePretty(new HttpResponseDto(OffsetDateTime.now().toString(), HTTP_OK, null, "OK")).getBytes(StandardCharsets.UTF_8));
-            }else{
-                internalServerError(exchange, "delete fail: todo.id" + todoId);
+            } else {
+                throw new DeleteException("delete fail: todo.id" + todoId);
             }
+        } catch (DeleteException e) {
+            badRequest(exchange, e.getMessage());
         } catch (Exception e) {
             log.error("delete handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

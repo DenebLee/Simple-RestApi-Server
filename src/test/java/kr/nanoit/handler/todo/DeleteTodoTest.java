@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,7 +99,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
     @Test
     @DisplayName("DELETE / todo-> 요청했을때 OK, 요청한 todo 가 삭제되어야 함")
-    void should_return_ok_when_todo_delete() throws IOException {
+    void should_return_ok_when_todo_delete() throws IOException, SQLException {
         // given
         TodoEntity todoData = new TodoEntity(0, "2022-12-12 12:12:12", "2022-12-12 12:12:12", "안녕하세요","lee");
         TodoEntity expected = todoService.save(todoData);

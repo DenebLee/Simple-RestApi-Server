@@ -2,6 +2,7 @@ package kr.nanoit.db.impl.todoservice;
 
 import kr.nanoit.object.entity.TodoEntity;
 
+import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -15,7 +16,7 @@ public class TodoServiceTestImpl implements TodoService {
     }
 
     @Override
-    public TodoEntity save(TodoEntity todoEntity) {
+    public TodoEntity save(TodoEntity todoEntity) throws SQLException {
         long key = todoId.incrementAndGet();
         todoEntity.setTodoId(key);
         todoList.put(key, todoEntity);

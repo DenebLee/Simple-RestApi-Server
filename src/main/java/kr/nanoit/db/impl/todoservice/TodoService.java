@@ -3,6 +3,8 @@ package kr.nanoit.db.impl.todoservice;
 import kr.nanoit.db.impl.PostgreSqlDbcp;
 import kr.nanoit.object.entity.TodoEntity;
 
+import java.sql.SQLException;
+
 public interface TodoService {
 
     static TodoService createTest() {
@@ -10,9 +12,9 @@ public interface TodoService {
     }
     static TodoService createPostgreSQL(PostgreSqlDbcp dbcp) { return new TodoServicePostgreSQLImpl(dbcp);}
 
-    TodoEntity save(TodoEntity todoEntity);
+    TodoEntity save(TodoEntity todoEntity) throws SQLException;
 
-    TodoEntity findById(long todoId);
+    TodoEntity findById(long todoId) throws SQLException;
 
 
     boolean deleteById(long todoId);

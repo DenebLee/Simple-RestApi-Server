@@ -4,6 +4,7 @@ import kr.nanoit.object.entity.TodoEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 저장되는지 확인")
-    void should_saved() {
+    void should_saved() throws SQLException {
         // given
         TodoService service = TodoService.createTest();
         TodoEntity expected = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo", "lee");
@@ -42,7 +43,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 가져와 지는지 테스트")
-    void should_get() {
+    void should_get() throws SQLException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
@@ -62,7 +63,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 삭제 되는지")
-    void should_delete() {
+    void should_delete() throws SQLException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
@@ -78,7 +79,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 수정 되는지")
-    void should_update() {
+    void should_update() throws SQLException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity originalData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
@@ -97,7 +98,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity의 key값이 포함되어 있는지")
-    void should_contain_key() {
+    void should_contain_key() throws SQLException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo", "lee");

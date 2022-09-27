@@ -1,11 +1,9 @@
 package kr.nanoit.exception;
 
-import java.sql.SQLException;
-
-public class CreateFailedException extends SQLException {
-
+public class TodoBadRequestException extends Exception {
     private String reason;
-    public CreateFailedException(String reason) {
+
+    public TodoBadRequestException(String reason) {
         super(reason);
         this.reason = reason;
     }
