@@ -1,6 +1,7 @@
 package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
+import kr.nanoit.exception.CreateFailedException;
 import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.UserEntity;
 
@@ -13,7 +14,7 @@ public interface UserService {
         return new UserServicePostgreSQLImpl(dbcp);
     }
 
-    UserEntity save(UserEntity userEntity) ;
+    UserEntity save(UserEntity userEntity) throws CreateFailedException;
 
     UserEntity findById(long userId);
 

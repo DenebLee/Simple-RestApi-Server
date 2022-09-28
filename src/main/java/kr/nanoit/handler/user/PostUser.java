@@ -1,9 +1,11 @@
 package kr.nanoit.handler.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.userservice.UserService;
+import kr.nanoit.exception.CreateFailedException;
 import kr.nanoit.exception.DtoReadException;
 import kr.nanoit.exception.PostException;
 import kr.nanoit.object.dto.UserDto;
@@ -46,7 +48,6 @@ public final class PostUser {
             UserDto userDto = getRead(body);
             if (userDto == null) {
                 throw new DtoReadException("parse failed");
-//                badRequest(exchange,PostException.);
             }
             if (userDto.getId() != 0) {
                 throw new DtoReadException("The id value should not be requested");
@@ -65,13 +66,14 @@ public final class PostUser {
             }
 
             UserEntity userEntity = userService.save(userDto.toEntity());
-            if (userEntity == null) {
-                internalServerError(exchange, "update query failed");
-            }
-
             responseOk(exchange, Mapper.writePretty(userEntity.toDto()).getBytes(StandardCharsets.UTF_8));
-
-        } catch (PostException | DtoReadException e) {
+        } catch (PostException e) {
+            badRequest(exchange, e.getReason());
+        } catch (CreateFailedException e) {
+            badRequest(exchange, e.getReason());
+        } catch (DtoReadException e) {
+            badRequest(exchange, e.getReason());
+        } catch (JsonProcessingException e) {
             badRequest(exchange, e.getMessage());
         } catch (Exception e) {
             log.error("POST /user handler error occurred", e);

@@ -1,5 +1,6 @@
 package kr.nanoit.db.impl.userservice;
 
+import kr.nanoit.exception.CreateFailedException;
 import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class UserServiceTestImplTest {
 
     @Test
     @DisplayName("UserServiceTest UserEntity 정상적으로 저장되는지 확인")
-    void should_saved() {
+    void should_saved() throws CreateFailedException {
         // given
         UserEntity expected = createTestUserEntity();
 
@@ -49,7 +50,7 @@ class UserServiceTestImplTest {
 
     @Test
     @DisplayName("UserServiceTest UserEntity 정상적으로 조회 되는지")
-    void should_get() {
+    void should_get() throws CreateFailedException {
         // given
         UserEntity expected = userService.save(createTestUserEntity());
 
@@ -67,7 +68,7 @@ class UserServiceTestImplTest {
 
     @Test
     @DisplayName("UserServiceTest UserEntity 정상적으로 삭제되는지")
-    void should_delete(){
+    void should_delete() throws CreateFailedException {
         // given
         UserEntity expected = userService.save(createTestUserEntity());
 
@@ -81,7 +82,7 @@ class UserServiceTestImplTest {
 // duplicate key value violates unique constraint "users_email_key"
     @Test
     @DisplayName("UserService UserEntity 정상적으로 수정 되는지")
-    void should_update() throws UpdateException {
+    void should_update() throws UpdateException, CreateFailedException {
         // given
         UserEntity originalUserDataExpected = userService.save(createTestUserEntity());
         UserEntity updateExpected = new UserEntity(originalUserDataExpected.getId(), null, "123123", "test@test.com");

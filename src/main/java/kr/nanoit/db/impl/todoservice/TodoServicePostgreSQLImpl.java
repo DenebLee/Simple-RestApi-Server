@@ -83,7 +83,7 @@ public class TodoServicePostgreSQLImpl implements TodoService {
         } finally {
             if (resultSet != null) {
                 resultSet.close();
-                return null;
+                throw new FindFailedException("resultSet.close failed");
             }
         }
         return null;

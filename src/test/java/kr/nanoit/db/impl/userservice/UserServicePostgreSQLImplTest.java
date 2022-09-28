@@ -1,6 +1,7 @@
 package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,7 +112,7 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest userEntity 정상적으로 수정 되는지")
-    void should_update() {
+    void should_update() throws UpdateException {
         // given
         UserEntity originalUserDataExpected = userService.save(createTestUserEntity());
         UserEntity updateExpected = new UserEntity(originalUserDataExpected.getId(), "LeeJeongSeob", "444", "post@naver.com");
