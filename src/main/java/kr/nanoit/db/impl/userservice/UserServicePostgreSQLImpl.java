@@ -2,10 +2,7 @@ package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
 import kr.nanoit.db.impl.UserServicePostgreSqlQuerys;
-import kr.nanoit.exception.CreateFailedException;
-import kr.nanoit.exception.DeleteException;
-import kr.nanoit.exception.FindFailedException;
-import kr.nanoit.exception.UpdateException;
+import kr.nanoit.exception.*;
 import kr.nanoit.object.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,29 +28,27 @@ public class UserServicePostgreSQLImpl implements UserService {
     }
 
     @Override
-    public UserEntity findById(long userId) {
-        ResultSet resultSet = null;
+    public UserEntity findById(long userId) throws FindFailedException {
+        ResultSet resultSet;
         try (Connection connection = dbcp.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.selectUser(userId))) {
             resultSet = preparedStatement.executeQuery();
-
-            if (resultSet != null) {
-                while (resultSet.next()) {
-                    UserEntity userEntity = new UserEntity();
-                    userEntity.setId(resultSet.getLong("id"));
-                    userEntity.setUsername(resultSet.getString("username"));
-                    userEntity.setPassword(resultSet.getString("password"));
-                    userEntity.setEmail(resultSet.getString("email"));
-                    return userEntity;
-                }
+            if (resultSet.next()) {
+                UserEntity userEntity = new UserEntity();
+                userEntity.setId(resultSet.getLong("id"));
+                userEntity.setUsername(resultSet.getString("username"));
+                userEntity.setPassword(resultSet.getString("password"));
+                userEntity.setEmail(resultSet.getString("email"));
+                return userEntity;
             } else {
                 throw new FindFailedException("not found result set");
-
             }
+        } catch (FindFailedException e) {
+            throw new FindFailedException(e.getReason());
         } catch (Exception e) {
-            log.error("failed found query", e);
+            e.printStackTrace();
+            throw new FindFailedException("failed found query");
         }
-        return null;
     }
 
     @Override
@@ -85,22 +80,25 @@ public class UserServicePostgreSQLImpl implements UserService {
             throw new CreateFailedException(e.getReason());
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new CreateFailedException(e.getMessage());
+            throw new CreateFailedException("Post server error");
         }
     }
 
 
     @Override
-    public boolean deleteById(long userId) {
+    public boolean deleteById(long userId) throws DeleteException {
         try (Connection connection = dbcp.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UserServicePostgreSqlQuerys.deleteUser(userId))) {
             int affectedRow = preparedStatement.executeUpdate();
             if (affectedRow == 0) {
                 throw new DeleteException("There are no deleted rows");
             }
+        }catch (DeleteException e) {
+            e.printStackTrace();
+            throw new DeleteException(e.getReason());
         } catch (Exception e) {
-            log.error("failed deleted query", e);
-            return false;
+            e.printStackTrace();
+            throw new DeleteException("failed deleted query");
         }
         return true;
     }
@@ -109,7 +107,8 @@ public class UserServicePostgreSQLImpl implements UserService {
 
     public UserEntity update(UserEntity userEntity) throws UpdateException {
         if (userEntity != null) {
-            try (Connection connection = dbcp.getConnection(); Statement statement = connection.createStatement();) {
+            try (Connection connection = dbcp.getConnection();
+                 Statement statement = connection.createStatement();) {
                 int affectRow = 0;
 
                 if (userEntity.getUsername() != null) {
@@ -128,14 +127,15 @@ public class UserServicePostgreSQLImpl implements UserService {
                 statement.close();
                 return userEntity;
 
-            } catch (UpdateException e) {
+            } catch (FindFailedException e) {
                 log.error(e.getMessage());
-
+                throw new UpdateException(e.getReason());
             } catch (SQLException e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
-        throw new UpdateException("userEntity is null");
+        throw new UpdateException("Update server error");
     }
 
     @Override

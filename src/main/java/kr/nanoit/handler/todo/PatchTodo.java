@@ -4,7 +4,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
-import kr.nanoit.exception.TodoBadRequestException;
+import kr.nanoit.exception.DtoReadException;
+import kr.nanoit.exception.HeaderBadRequestException;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.object.entity.TodoEntity;
 import kr.nanoit.utils.Mapper;
@@ -29,54 +31,39 @@ public class PatchTodo {
     public void handle(HttpExchange exchange) {
         try {
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
-               throw new TodoBadRequestException("not found: Content-Type Header");
+                throw new UpdateException("not found: Content-Type Header");
             }
 
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                throw new TodoBadRequestException("accept Content-Type: application/json");
+                throw new UpdateException("accept Content-Type: application/json");
             }
 
             String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody(), Charsets.UTF_8));
             TodoDto todoDto = getRead(body);
 
             if (todoDto == null) {
-                badRequest(exchange, "parse failed");
-                return;
+                throw new DtoReadException("parse failed");
             }
-
-            if (todoDto.getCreatedAt() == null) {
-                badRequest(exchange, "not found: createdAt");
-                return;
+            if (todoDto.getTodoId() == 0) {
+                throw new DtoReadException("TodoID is missing");
             }
-
-            if (todoDto.getContent() == null) {
-                badRequest(exchange, "not found: content");
-                return;
-            }
-
-            if (todoDto.getModifiedAt() == null) {
-                badRequest(exchange, "not found: modifiedTime");
-                return;
-            }
-
-            if (todoDto.getWriter() == null) {
-                badRequest(exchange, "not found: writer");
-                return;
-            }
-
 
             TodoEntity todoEntity = todoService.update(todoDto.toEntity());
 
             if (todoEntity == null) {
-                internalServerError(exchange, "update query failed");
+                throw new Exception("Unknown Error");
             }
 
             responseOk(exchange, Mapper.writePretty(todoEntity).getBytes(StandardCharsets.UTF_8));
 
 
+        } catch (DtoReadException e) {
+            badRequest(exchange, e.getReason());
+        } catch (UpdateException e) {
+            badRequest(exchange, e.getReason());
         } catch (Exception e) {
             log.error("patch handler error occurred", e);
-            internalServerError(exchange, "Unknown Error");
+            internalServerError(exchange, e.getMessage());
         } finally {
             exchange.close();
         }

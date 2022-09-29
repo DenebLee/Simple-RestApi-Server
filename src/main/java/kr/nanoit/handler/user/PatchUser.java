@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import static kr.nanoit.handler.common.HandlerUtil.badRequest;
 import static kr.nanoit.handler.common.HandlerUtil.responseOk;
 import static kr.nanoit.handler.common.Validation.internalServerError;
+import static kr.nanoit.handler.common.Validation.requestedValidate;
 import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
 
 @Slf4j
@@ -50,6 +51,9 @@ public final class PatchUser {
             if (userDto.getId() == 0) {
                 throw new DtoReadException("User ID is missing");
             }
+            if(requestedValidate(userDto.getEmail())){
+                throw new UpdateException("The requested e-mail doesn't fit the format");
+            }
 
             UserEntity userEntity = userService.update(userDto.toEntity());
 
@@ -59,8 +63,10 @@ public final class PatchUser {
 
             responseOk(exchange, Mapper.writePretty(userEntity).getBytes(StandardCharsets.UTF_8));
 
-        } catch (UpdateException | DtoReadException e) {
-            badRequest(exchange, e.getMessage());
+        } catch (UpdateException e) {
+            badRequest(exchange, e.getReason());
+        } catch (DtoReadException e) {
+            badRequest(exchange, e.getReason());
         } catch (Exception e) {
             log.error("patch handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

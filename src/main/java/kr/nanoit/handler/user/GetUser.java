@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.exception.DtoReadException;
 import kr.nanoit.exception.GetException;
+import kr.nanoit.exception.HeaderBadRequestException;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.utils.ExchangeRawPrinter;
@@ -57,8 +58,10 @@ public class GetUser {
                 throw new DtoReadException("get user query failed: user.id=" + userId);
             }
             responseOk(exchange, Mapper.writePretty(userDto).getBytes(StandardCharsets.UTF_8));
-        } catch (GetException | DtoReadException e) {
-            badRequest(exchange, e.getMessage());
+        } catch (GetException e) {
+            badRequest(exchange, e.getReason());
+        } catch (DtoReadException e) {
+            badRequest(exchange, e.getReason());
         } catch (Exception e) {
             log.error("get handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

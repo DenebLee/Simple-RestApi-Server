@@ -27,10 +27,10 @@ public final class TodoServicePostgreSqlQuerys {
         return "DELETE FROM todo WHERE id = '" + id + "'";
     }
 
-    public static String updateTodo(long id, Timestamp modifiedAt, String content, String writer) {
-        return "UPDATE todo SET modifiedAt = '" + modifiedAt + "', content = '" + content + "' , writer = '" + writer + "' WHERE id = '" + id + "'";
+    public static String updateTodo(Timestamp modifiedAt, String column, String value, long id) {
+        return "UPDATE todo SET modifiedAt = '" + modifiedAt + "', " + column + " = '" + value + "' WHERE id = '" + id + "'";
     }
     public static String containsById(long todoId) {
-        return "SELECT COUNT(*) AS COUNT FROM users WHERE id = " + todoId;
+        return "SELECT COUNT(*) AS COUNT FROM todo WHERE id = " + todoId;
     }
 }

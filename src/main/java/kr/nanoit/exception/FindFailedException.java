@@ -1,10 +1,15 @@
 package kr.nanoit.exception;
 
-import java.sql.SQLException;
+public class FindFailedException extends Exception {
 
-public class FindFailedException extends SQLException {
+    private String reason;
 
-    public FindFailedException(String message) {
-        super(message);
+    public FindFailedException(String reason) {
+        super(reason);
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

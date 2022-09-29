@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static kr.nanoit.utils.GlobalVariable.*;
 
@@ -27,5 +29,15 @@ public class Validation {
         } catch (Exception e) {
             log.error("internal server process in unknown error", e);
         }
+    }
+
+    public static boolean requestedValidate(String email){
+        String regx = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(regx);
+        Matcher matcher = pattern.matcher(email);
+        if(matcher.matches()){
+            return true;
+        }
+        return false;
     }
 }

@@ -1,6 +1,5 @@
 package kr.nanoit.handler.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
@@ -19,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import static kr.nanoit.handler.common.HandlerUtil.badRequest;
 import static kr.nanoit.handler.common.HandlerUtil.responseOk;
 import static kr.nanoit.handler.common.Validation.internalServerError;
+import static kr.nanoit.handler.common.Validation.requestedValidate;
 import static kr.nanoit.utils.GlobalVariable.HEADER_CONTENT_TYPE;
 
 @Slf4j
@@ -64,6 +64,9 @@ public final class PostUser {
             if (userDto.getEmail() == null) {
                 throw new DtoReadException("not found: user.email");
             }
+            if(requestedValidate(userDto.getEmail()) == false){
+                throw new PostException("The requested e-mail doesn't fit the format");
+            }
 
             UserEntity userEntity = userService.save(userDto.toEntity());
             responseOk(exchange, Mapper.writePretty(userEntity.toDto()).getBytes(StandardCharsets.UTF_8));
@@ -73,9 +76,7 @@ public final class PostUser {
             badRequest(exchange, e.getReason());
         } catch (DtoReadException e) {
             badRequest(exchange, e.getReason());
-        } catch (JsonProcessingException e) {
-            badRequest(exchange, e.getMessage());
-        } catch (Exception e) {
+        }  catch (Exception e) {
             log.error("POST /user handler error occurred", e);
             internalServerError(exchange, "Unknown Error");
         } finally {

@@ -2,6 +2,7 @@ package kr.nanoit.handler.user;
 
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.userservice.UserService;
+import kr.nanoit.exception.DeleteException;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.object.dto.HttpResponseDto;
 import kr.nanoit.utils.Mapper;
@@ -32,25 +33,21 @@ public final class DeleteUser {
             Map<String, List<String>> queryStrings = QueryParsing.splitQuery(exchange.getRequestURI().getRawQuery());
 
             if (!queryStrings.containsKey("id")) {
-                badRequest(exchange, "not found: query.id");
-                return;
+                throw new DeleteException("not found: query.id");
             }
 
             if (queryStrings.containsKey("id") && queryStrings.get("id").size() != 1) {
-                badRequest(exchange, "invalid: query.id");
-                return;
+                throw new DeleteException("invalid: query.id");
             }
 
             int userId = Integer.parseInt(queryStrings.get("id").get(0));
 
             if (userId <= 0) {
-                badRequest(exchange, "zero value: query.id");
-                return;
+                throw new DeleteException("zero value: query.id");
             }
 
             if (!userService.containsById(userId)) {
-                badRequest(exchange, "not found: user.id");
-                return;
+                throw new DeleteException("not found: user.id");
             }
 
             boolean isSuccess = userService.deleteById(userId);
@@ -60,6 +57,10 @@ public final class DeleteUser {
             } else {
                 internalServerError(exchange, "delete fail: user.id=" + userId);
             }
+
+        } catch (DeleteException e) {
+            log.error("delete handler error occurred", e);
+            badRequest(exchange, e.getReason());
         } catch (Exception e) {
             log.error("delete handler error occurred", e);
             internalServerError(exchange, "Unknown Error");

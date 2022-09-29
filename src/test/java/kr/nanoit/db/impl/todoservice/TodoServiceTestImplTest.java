@@ -1,5 +1,8 @@
 package kr.nanoit.db.impl.todoservice;
 
+import kr.nanoit.exception.DeleteException;
+import kr.nanoit.exception.FindFailedException;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.TodoEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +46,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 가져와 지는지 테스트")
-    void should_get() throws SQLException {
+    void should_get() throws SQLException, FindFailedException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
@@ -63,7 +66,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 삭제 되는지")
-    void should_delete() throws SQLException {
+    void should_delete() throws SQLException, DeleteException, FindFailedException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity testData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");
@@ -79,7 +82,7 @@ class TodoServiceTestImplTest {
 
     @Test
     @DisplayName("TodoServiceTest TodoEntity가 정상적으로 수정 되는지")
-    void should_update() throws SQLException {
+    void should_update() throws SQLException, UpdateException {
         // given
         TodoService todoService = TodoService.createTest();
         TodoEntity originalData = new TodoEntity(0, OffsetDateTime.now().toString(), OffsetDateTime.now().toString(), "First Test Todo","lee");

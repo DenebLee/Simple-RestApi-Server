@@ -1,6 +1,9 @@
 package kr.nanoit.db.impl.todoservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
+import kr.nanoit.exception.DeleteException;
+import kr.nanoit.exception.FindFailedException;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.TodoEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +86,7 @@ class TodoServicePostgreSQLImpleTest {
 
     @Test
     @DisplayName("TodoServicePostgreSQLImpleTest TodoEntity 정상적으로 조회 되는지")
-    void should_findById() throws SQLException {
+    void should_findById() throws SQLException, FindFailedException {
         // given
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
         TodoEntity expected = todoService.save(new TodoEntity(0, createAt, null, "안녕하세요 오늘은 시간 변환 때문에 힘들었어요", "lee"));
@@ -99,7 +102,7 @@ class TodoServicePostgreSQLImpleTest {
 
     @Test
     @DisplayName("TodoServicePostgreImpleTest TodoEntity 정상적으로 삭제 되는지")
-    void should_delete() throws SQLException {
+    void should_delete() throws SQLException, DeleteException, FindFailedException {
         // given
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
         TodoEntity expected = todoService.save(new TodoEntity(0, createAt, null, "삭제 테스트 중입니다. 삭제 되었으면 좋겠네요", "lee"));
@@ -114,7 +117,7 @@ class TodoServicePostgreSQLImpleTest {
 
     @Test
     @DisplayName("TodoServicePostgreimpleTest TodoEntity 정상적으로 수정 되는지")
-    void should_update() throws SQLException {
+    void should_update() throws SQLException, UpdateException {
         // given
         String modifiedAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
         String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());

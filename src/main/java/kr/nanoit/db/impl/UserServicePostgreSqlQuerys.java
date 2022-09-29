@@ -34,6 +34,6 @@ public final class UserServicePostgreSqlQuerys {
     }
 
     public static String columnDuplicateValue(String username, String email) {
-        return "SELECT COUNT(*) AS COUNT FROM users WHERE username = '" + username + "'AND'" + email + "' ";
+        return "SELECT COUNT(*) AS COUNT FROM users WHERE username = '" + username + "'AND email ='" + email + "' ";
     }
 }

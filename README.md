@@ -66,10 +66,14 @@
 - 테이블에 중복 userData가 들어가지 못하도록  email에 unique 조건을 걸어 중복 배제 
   - 이에 따른 error 처리 해야됨 
 - 기존 로직에선 @UPDATE 시 user{username, password, email} 에 대한 값을 모두 받았지만 셋중 한개만 받아도 처리할 수 있게 수정
-- #### 2022-09-28
+#### 2022-09-28
 - @PATCH 시 user 정보 전체를 받아야 했던 로직 수정 
 - Exception 공부 
 - @POST 시 중복 값 확인 후 Exception 처리
+#### 2022-09-29
+- e-mail 정규식 추가로 검증 로직 추가
+- 중복 값 요청받았을때 테이블 조회해서 중복값있으면 bad Request 던져줌
+- Todo 사용자 입장에서 writer, content 만 작성하고 넘기도록 수정
 
 
 ## Project Structure

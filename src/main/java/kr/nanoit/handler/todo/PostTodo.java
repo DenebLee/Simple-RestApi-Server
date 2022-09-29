@@ -4,7 +4,8 @@ import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.exception.CreateFailedException;
-import kr.nanoit.exception.TodoBadRequestException;
+import kr.nanoit.exception.PostException;
+import kr.nanoit.exception.HeaderBadRequestException;
 import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.object.entity.TodoEntity;
 import kr.nanoit.utils.Mapper;
@@ -32,41 +33,38 @@ public class PostTodo {
     public void handle(HttpExchange exchange) {
         try {
             if (!exchange.getRequestHeaders().containsKey(HEADER_CONTENT_TYPE)) {
-                throw new TodoBadRequestException("not found: Content-Type Header");
+                throw new PostException("not found: Content-Type Header");
             }
 
             if (!exchange.getRequestHeaders().get(HEADER_CONTENT_TYPE).get(0).equalsIgnoreCase("application/json")) {
-                throw new TodoBadRequestException("accept Content-Type application/json");
+                throw new PostException("accept Content-Type application/json");
             }
 
             String body = CharStreams.toString(new InputStreamReader(exchange.getRequestBody()));
             TodoDto todoDto = getRead(body);
-            System.out.println(todoDto);
 
             if (todoDto == null) {
-                throw new TodoBadRequestException("parse failed");
+                throw new PostException("Unacceptable value requested");
             }
 
-            if (todoDto.getCreatedAt() == null) {
-                throw new TodoBadRequestException("not Found : Created Time");
+            if (todoDto.getWriter() == null) {
+                throw new PostException("not Found : Writer");
             }
 
             if (todoDto.getContent() == null) {
-                throw new TodoBadRequestException("not Found : Content");
+                throw new PostException("not Found : Content");
             }
 
             TodoEntity todoEntity = todoService.save(todoDto.toEntity());
 
             responseOk(exchange, Mapper.writePretty(todoEntity.toDto()).getBytes(StandardCharsets.UTF_8));
 
-        } catch (TodoBadRequestException e) {
+        } catch (PostException e) {
             badRequest(exchange, e.getReason());
         } catch (SQLException e) {
             if (e instanceof CreateFailedException) {
-                // TODO RESPONSE STATUS 변경
                 badRequest(exchange, ((CreateFailedException) e).getReason());
             } else {
-                // TODO RESPONSE STATUS 변경
                 badRequest(exchange, e.getMessage());
             }
         } catch (Exception e) {

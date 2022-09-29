@@ -1,9 +1,9 @@
 package kr.nanoit.exception;
 
-public class TodoBadRequestException extends Exception {
+public class HeaderBadRequestException extends Exception {
     private String reason;
 
-    public TodoBadRequestException(String reason) {
+    public HeaderBadRequestException(String reason) {
         super(reason);
         this.reason = reason;
     }
