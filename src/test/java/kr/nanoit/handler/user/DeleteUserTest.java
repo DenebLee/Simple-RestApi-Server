@@ -113,11 +113,11 @@ class DeleteUserTest {
         boolean actual = userService.deleteById(expected.getId());
         // then
 
-        assertThat(actual).isTrue(); 
+        assertThat(actual).isTrue();
         assertThat(userService.findById(expected.getId())).isNull();
         assertThat(responseActual.code).isEqualTo(200);
         assertThat(responseActual.body).contains("OK");
-   }
+    }
 
     private Response delete(String uri) throws IOException {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {

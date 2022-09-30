@@ -64,7 +64,7 @@ public final class PostUser {
             if (userDto.getEmail() == null) {
                 throw new DtoReadException("not found: user.email");
             }
-            if(requestedValidate(userDto.getEmail()) == false){
+            if (requestedValidate(userDto.getEmail()) == false) {
                 throw new PostException("The requested e-mail doesn't fit the format");
             }
 
@@ -76,7 +76,7 @@ public final class PostUser {
             badRequest(exchange, e.getReason());
         } catch (DtoReadException e) {
             badRequest(exchange, e.getReason());
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("POST /user handler error occurred", e);
             internalServerError(exchange, "Unknown Error");
         } finally {

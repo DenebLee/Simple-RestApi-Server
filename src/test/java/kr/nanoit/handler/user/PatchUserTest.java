@@ -93,13 +93,13 @@ class PatchUserTest {
         assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("parse failed");
     }
-    
+
     @Test
     @DisplayName("PATCH /user-> 요청한 값중 id가 없을 경우 badRequest가 떨어져야 함")
     void should_return_when_user_id_not_exits() throws IOException {
         // given
         String json = "{\"username\": \"lee\" ,\"password\": \"123123\" , \"email\" : \"test@test.com\"}";
-        String url  = "http://localhost:" + port + "/user";
+        String url = "http://localhost:" + port + "/user";
         StringEntity stringEntity = new StringEntity(json);
 
         // when

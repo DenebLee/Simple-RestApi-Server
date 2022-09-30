@@ -52,7 +52,7 @@ public final class PatchUser {
                 throw new DtoReadException("User ID is missing");
             }
 
-            if(userDto.getEmail() != null){
+            if (userDto.getEmail() != null) {
                 if (requestedValidate(userDto.getEmail()) == false) {
                     throw new UpdateException("The requested e-mail doesn't fit the format");
                 }

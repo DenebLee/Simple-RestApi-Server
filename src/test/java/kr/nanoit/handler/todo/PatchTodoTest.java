@@ -93,7 +93,7 @@ class PatchTodoTest {
         assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("parse failed");
     }
-    
+
     @Test
     @DisplayName("PATCH / todo-> todo 정보 수정 요청을 했을때 정상이면 요청했던 TODO 정보가 내려와야 함")
     void should_return_ok_when_todo_patch() throws IOException, SQLException, UpdateException {

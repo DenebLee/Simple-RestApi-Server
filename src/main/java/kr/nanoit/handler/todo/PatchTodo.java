@@ -5,7 +5,6 @@ import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.exception.DtoReadException;
-import kr.nanoit.exception.HeaderBadRequestException;
 import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.object.entity.TodoEntity;
@@ -43,6 +42,9 @@ public class PatchTodo {
 
             if (todoDto == null) {
                 throw new DtoReadException("parse failed");
+            }
+            if (todoDto.getContent() == null && todoDto.getWriter() == null) {
+                throw new DtoReadException("There is no value requested");
             }
             if (todoDto.getTodoId() == 0) {
                 throw new DtoReadException("TodoID is missing");

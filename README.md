@@ -1,11 +1,14 @@
 # History
 
 ## NEXT
-1. TODO API에 대한 유저 인증
-2. 로그인
-3. 세션 관리 또는 토큰 관리
+1. 로그인
+2. 세션 관리 또는 토큰 관리
+
+## NOW
+1. USER, TODO API에 대한 유저 인증 -> JWT 사용 예정
 
 ## DONE
+
 - UserService.class 테스트 코드 작성 및 내부 코드 수정 ✔
 - PostHandler.class 테스트 코드 작성 ✔
 - PatchHandler.class 테스트 코드 작성 ✔
@@ -13,7 +16,7 @@
 - TodoHandler 시작 ✔
 - PostgreSqlDbcp 구현 ✔
 - PostgreSqlDbcp 테스트 작성 ✔
-- UserServicePostgreSQLImpl 구현 ✔ 
+- UserServicePostgreSQLImpl 구현 ✔
 - UserServicePostgreSQLImpl 테스트 작성 ✔
 - TodoServicePostgreSQLImpl 구현 ✔
 - TodoServicePostgreSQLImpl 테스트 작성 ✔
@@ -37,8 +40,8 @@
 | [2022-09-29] | e-mail 정규식 추가로 검증 로직 추가, 중복 값 요청받았을때 테이블 조회해서 중복값있으면 bad Request 던져줌, Todo 사용자 입장에서 writer, content만 작성하고 넘기도록 수정                                                                                                                                                                                                                    |
 | [2022-09-30] | 조건 두개를 갖는 쿼리문 수정함, @PATCH 요청시 username, email 각각 따로 요청했을때 중복 검증 실시하며 동시에 요청했을때도 중복 검증 실시하도록 로직 변경, 수정된 실제코드에 맞게 테스트 코드 재 수정, Todo , user 각각 @GET 메소드에서 요청한 값이 없을때 exception 으로 던져주던걸 return null 로 수정                                                                                                                                |
 
-
 ## Project Structure
+
 ```bash
 
 └─src 

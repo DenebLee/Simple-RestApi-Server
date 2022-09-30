@@ -47,6 +47,9 @@ dependencies {
 
     // JDBC DRIVER
     implementation 'org.postgresql:postgresql:42.5.0'
+
+    //JWT
+    implementation 'com.auth0:java-jwt:4.0.0'
 }
 
 test {

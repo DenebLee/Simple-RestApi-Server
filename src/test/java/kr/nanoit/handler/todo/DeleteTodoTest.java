@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DELETE /todo 테스트")
 @Slf4j
- class DeleteTodoTest {
+class DeleteTodoTest {
     private SandBoxHttpServer httpServer;
     private UserService userService;
     private TodoService todoService;
@@ -73,7 +73,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
     @Test
     @DisplayName("DELETE / todo-> (쿼리 스트링 ID가 -1일때) 로 요청했을때 BAD REQUEST가 내려와야 함")
-    void should_return_bad_request_when_query_string_is_minus() throws IOException{
+    void should_return_bad_request_when_query_string_is_minus() throws IOException {
         // given
         String url = "http://localhost:" + port + "/todo?id=-1";
 
@@ -103,7 +103,7 @@ import static org.assertj.core.api.Assertions.assertThat;
     @DisplayName("DELETE / todo-> 요청했을때 OK, 요청한 todo 가 삭제되어야 함")
     void should_return_ok_when_todo_delete() throws IOException, SQLException, DeleteException, FindFailedException {
         // given
-        TodoEntity todoData = new TodoEntity(0, "2022-12-12 12:12:12", "2022-12-12 12:12:12", "안녕하세요","lee");
+        TodoEntity todoData = new TodoEntity(0, "2022-12-12 12:12:12", "2022-12-12 12:12:12", "안녕하세요", "lee");
         TodoEntity expected = todoService.save(todoData);
         String url = "http://localhost:" + port + "/todo?id=1";
 

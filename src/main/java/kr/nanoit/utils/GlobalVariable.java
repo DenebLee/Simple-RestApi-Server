@@ -15,6 +15,5 @@ public final class GlobalVariable {
     public static final String METHOD_DELETE = "DELETE";
     public static final String METHOD_POST = "POST";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=UTF-8";
-    public static final String DATE_FORMAT_PATTERN= "yyyy-MM-dd'T'HH:mm:ss.SSS";
 }
 

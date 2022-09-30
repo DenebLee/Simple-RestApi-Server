@@ -27,7 +27,5 @@ public class SandBoxHttpServer {
     httpServer.start();
   }
 
-  public void stop(int delay) {
-    httpServer.stop(delay);
-  }
+
 }

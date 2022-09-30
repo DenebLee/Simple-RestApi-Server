@@ -43,7 +43,7 @@ public class UserServicePostgreSQLImpl implements UserService {
             } else {
                 return null;
             }
-        }catch (Exception e) {
+       }catch (Exception e) {
             e.printStackTrace();
             throw new FindFailedException("failed found query");
         }
