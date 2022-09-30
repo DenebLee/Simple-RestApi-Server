@@ -69,27 +69,21 @@ public class TodoServicePostgreSQLImpl implements TodoService {
         try (Connection connection = dbcp.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(TodoServicePostgreSqlQuerys.selectTodo(todoId))) {
             resultSet = preparedStatement.executeQuery();
-            if (resultSet != null) {
-                if (resultSet.next()) {
-                    TodoEntity todoEntity = new TodoEntity();
-                    todoEntity.setTodoId(resultSet.getLong("id"));
-                    todoEntity.setCreatedAt(resultSet.getString("createAt"));
-                    todoEntity.setModifiedAt(resultSet.getString("modifiedAt"));
-                    todoEntity.setContent(resultSet.getString("content"));
-                    todoEntity.setWriter(resultSet.getString("writer"));
-                    return todoEntity;
-                }
+            if (resultSet.next()) {
+                TodoEntity todoEntity = new TodoEntity();
+                todoEntity.setTodoId(resultSet.getLong("id"));
+                todoEntity.setCreatedAt(resultSet.getString("createAt"));
+                todoEntity.setModifiedAt(resultSet.getString("modifiedAt"));
+                todoEntity.setContent(resultSet.getString("content"));
+                todoEntity.setWriter(resultSet.getString("writer"));
+                return todoEntity;
             } else {
-                throw new FindFailedException("not found result set");
+                return null;
             }
-        } catch (FindFailedException e) {
-            log.error("failed found query", e);
-            throw new FindFailedException(e.getReason());
         } catch (SQLException e) {
             log.error("failed found query", e);
             throw new FindFailedException("failed found query");
         }
-        throw new FindFailedException("Find Server Error");
     }
 
     @Override

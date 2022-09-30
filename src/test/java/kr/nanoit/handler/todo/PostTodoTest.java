@@ -28,7 +28,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("POST / todo 테스트")
- class PostTodoTest {
+class PostTodoTest {
 
     private SandBoxHttpServer httpServer;
     private UserService userService;
@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         port = getRandomPort();
         userService = new UserServiceTestImpl();
         todoService = new TodoServiceTestImpl();
-        httpServer = new SandBoxHttpServer("localhost", port , userService, todoService);
+        httpServer = new SandBoxHttpServer("localhost", port, userService, todoService);
         httpServer.start();
     }
 
@@ -60,21 +60,6 @@ import static org.assertj.core.api.Assertions.assertThat;
         assertThat(actual.header).isNotEqualTo(contentType);
         assertThat(actual.body).contains("not found: Content-Type Header");
     }
-
-//    @Test
-//    @DisplayName("POST / todo -> header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
-//    void should_return_bad_request_when_empty_content_type_header() throws IOException {
-//        // given
-//        String url = "http://localhost:" + port + "/todo";
-//
-//        // when
-//        Response actual = post(url, null, null);
-//
-//        // then
-//        assertThat(actual.code).isEqualTo(400);
-//        assertThat(actual.header).contains("application/json");
-//        assertThat(actual.body).contains("invalid: Content-Type Header");
-//    }
 
     @Test
     @DisplayName("POST / todo -> header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
@@ -106,24 +91,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("parse failed");
-    }
-
-    @Test
-    @DisplayName("POST / todo -> createdAt 이 null 일 경우  badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_createAt_is_null() throws IOException {
-        // given
-        String json = "{\"modifiedAt\": \"2022-03-03 12:12:12\" , \"content\" : \"hello\", \"writer\" : \"lee\"}";
-        String url = "http://localhost:" + port + "/todo";
-        StringEntity stringEntity = new StringEntity(json);
-
-
-        // when
-        Response actual = postJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not Found : Created Time");
+        assertThat(actual.body).contains("Unacceptable value requested");
     }
 
     @Test
@@ -143,13 +111,11 @@ import static org.assertj.core.api.Assertions.assertThat;
     }
 
 
-
-
     @Test
     @DisplayName("POST / todo -> Todo를 등록했을 때  정상이면 요청한 Todo 정보가 내려와야 됨")
     void should_return_ok_when_user() throws IOException, SQLException {
         // given
-        TodoDto expected = new TodoDto(0, "2022-09-02 05:05:22", null,"hi nice to meet you", "lee");
+        TodoDto expected = new TodoDto(0, "2022-09-02 05:05:22", null, "hi nice to meet you", "lee");
         String url = "http://localhost:" + port + "/todo";
 
         // when
@@ -191,6 +157,7 @@ import static org.assertj.core.api.Assertions.assertThat;
             }
         }
     }
+
     private int getRandomPort() {
         return new SecureRandom().nextInt(64511) + 1024;
     }

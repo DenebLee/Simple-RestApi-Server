@@ -4,6 +4,9 @@ import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
+import kr.nanoit.exception.CreateFailedException;
+import kr.nanoit.exception.DeleteException;
+import kr.nanoit.exception.FindFailedException;
 import kr.nanoit.object.entity.UserEntity;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +102,7 @@ class DeleteUserTest {
 
     @Test
     @DisplayName("DELETE / user-> 요청했을때 OK, 요청한 아이디의 유저가 삭제되어야 함")
-    void should_return_ok_when_user_delete() throws IOException {
+    void should_return_ok_when_user_delete() throws IOException, CreateFailedException, DeleteException, FindFailedException {
         // given
         UserEntity userData = new UserEntity(0, "test01", "123123", "test01@test.com");
         UserEntity expected = userService.save(userData);

@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.exception.DtoReadException;
 import kr.nanoit.exception.GetException;
-import kr.nanoit.exception.HeaderBadRequestException;
 import kr.nanoit.handler.common.QueryParsing;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.utils.ExchangeRawPrinter;
@@ -49,7 +48,7 @@ public class GetUser {
             }
 
             if (!userService.containsById(userId)) {
-                throw new GetException("not found: user.id");
+                throw new GetException("not found: user");
             }
 
             UserDto userDto = userService.findById(userId).toDto();

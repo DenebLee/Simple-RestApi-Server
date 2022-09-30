@@ -5,6 +5,7 @@ import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
+import kr.nanoit.exception.CreateFailedException;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.utils.Mapper;
 import lombok.Getter;
@@ -159,7 +160,7 @@ class PostUserTest {
 
     @Test
     @DisplayName("POST / user-> 회원가입 요청했을때 정상이면 요청한 USER 정보가 내려와야 됨")
-    void should_return_ok_when_user() throws IOException {
+    void should_return_ok_when_user() throws IOException, CreateFailedException {
         // given
         UserDto expected = new UserDto(0, "lee", "123123", "test@test.com");
         String url = "http://localhost:" + port + "/user";

@@ -1,6 +1,8 @@
 package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.exception.CreateFailedException;
+import kr.nanoit.exception.DeleteException;
+import kr.nanoit.exception.FindFailedException;
 import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +33,7 @@ class UserServiceTestImplTest {
 
     @Test
     @DisplayName("UserServiceTest UserEntity 정상적으로 저장되는지 확인")
-    void should_saved() throws CreateFailedException {
+    void should_saved() throws CreateFailedException, FindFailedException {
         // given
         UserEntity expected = createTestUserEntity();
 
@@ -50,7 +52,7 @@ class UserServiceTestImplTest {
 
     @Test
     @DisplayName("UserServiceTest UserEntity 정상적으로 조회 되는지")
-    void should_get() throws CreateFailedException {
+    void should_get() throws CreateFailedException, FindFailedException {
         // given
         UserEntity expected = userService.save(createTestUserEntity());
 
@@ -68,7 +70,7 @@ class UserServiceTestImplTest {
 
     @Test
     @DisplayName("UserServiceTest UserEntity 정상적으로 삭제되는지")
-    void should_delete() throws CreateFailedException {
+    void should_delete() throws CreateFailedException, DeleteException, FindFailedException {
         // given
         UserEntity expected = userService.save(createTestUserEntity());
 

@@ -51,8 +51,11 @@ public final class PatchUser {
             if (userDto.getId() == 0) {
                 throw new DtoReadException("User ID is missing");
             }
-            if(requestedValidate(userDto.getEmail())){
-                throw new UpdateException("The requested e-mail doesn't fit the format");
+
+            if(userDto.getEmail() != null){
+                if (requestedValidate(userDto.getEmail()) == false) {
+                    throw new UpdateException("The requested e-mail doesn't fit the format");
+                }
             }
 
             UserEntity userEntity = userService.update(userDto.toEntity());

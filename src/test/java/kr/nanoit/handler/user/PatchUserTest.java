@@ -4,6 +4,8 @@ import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
+import kr.nanoit.exception.CreateFailedException;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.dto.UserDto;
 import kr.nanoit.object.entity.UserEntity;
 import kr.nanoit.utils.Mapper;
@@ -59,19 +61,6 @@ class PatchUserTest {
         assertThat(actual.body).contains("not found: Content-Type Header");
     }
 
-//    @Test
-//    @DisplayName("PATCH / header = content type 을 요청했을때 비어있으면 badRequest 가 떨어져야됨")
-//    void should_return_bad_request_when_empty_content_type_header() throws IOException {
-//        // given
-//        String url = "http://localhost:" + port + "/user";
-//
-//        // when
-//        Response actual = patch(url, null, null);
-//
-//        // then
-//        assertThat(actual.code).isEqualTo(400);
-//        assertThat(actual.body).contains("not found: Content-Type Header");
-//    }
 
     @Test
     @DisplayName("PATCH / header = content type 을 요청했을때  application/json 이 아닌경우 badRequest 가 떨어져야됨")
@@ -104,13 +93,13 @@ class PatchUserTest {
         assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("parse failed");
     }
-
+    
     @Test
-    @DisplayName("PATCH / id 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_id_is_null() throws IOException {
+    @DisplayName("PATCH /user-> 요청한 값중 id가 없을 경우 badRequest가 떨어져야 함")
+    void should_return_when_user_id_not_exits() throws IOException {
         // given
         String json = "{\"username\": \"lee\" ,\"password\": \"123123\" , \"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
+        String url  = "http://localhost:" + port + "/user";
         StringEntity stringEntity = new StringEntity(json);
 
         // when
@@ -118,64 +107,36 @@ class PatchUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.id");
+        assertThat(actual.body).contains("User ID is missing");
+
     }
 
     @Test
-    @DisplayName("PATCH / username 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_username_is_null() throws IOException {
+    @DisplayName("PATCH /user-> 수정 요청한 이메일이 형식에 안맞으면 badRequest 가 떨어져야 함")
+    void should_return_bad_request_if_the_requested_email_does_not_fit_the_format() throws IOException, UpdateException {
         // given
-        String json = "{\"id\": 2, \"password\": \"123123\" , \"email\" : \"test@test.com\"}";
+        String json = "{\"id\": \"1\" , \"email\" : \"test\"}";
+
         String url = "http://localhost:" + port + "/user";
         StringEntity stringEntity = new StringEntity(json);
+
 
         // when
         Response actual = patchJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.username");
+        assertThat(actual.body).contains("The requested e-mail doesn't fit the format");
     }
 
     @Test
-    @DisplayName("PATCH / password 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_password_is_null() throws IOException {
+    @DisplayName("PATCH /user-> 유저 정보 수정 요청을 했을때 정상이면 요청했던 USER 정보가 내려와야 됨")
+    void should_return_ok_when_user_patch() throws IOException, CreateFailedException, UpdateException {
         // given
-        String json = "{\"id\": 2, \"username\": \"lee\" ,\"email\" : \"test@test.com\"}";
-        String url = "http://localhost:" + port + "/user";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = patchJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.password");
-    }
-
-    @Test
-    @DisplayName("PATCH / email 값이 null 일 경우 badRequest 가 떨어져야됨 ")
-    void should_return_bad_request_when_email_is_null() throws IOException {
-        // given
-        String json = "{\"id\": 2, \"username\": \"lee\" ,\"password\": \"123123\"}";
-        String url = "http://localhost:" + port + "/user";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = patchJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.email");
-    }
-
-    @Test
-    @DisplayName("PATCH /user 유저 정보 수정 요청을 했을때 정상이면 요청했던 USER 정보가 내려와야 됨")
-    void should_return_ok_when_user_patch() throws IOException {
-        // given
-        UserEntity originalUserData = userService.save(new UserEntity(0, "test01", "123123", "test01@test.com"));
+        userService.save(new UserEntity(0, "test01", "123123", "test01@test.com"));
         UserDto expected = new UserDto(1, "leejeongseob", "123123", "test@test.com");
         String url = "http://localhost:" + port + "/user";
+
 
         // when
         Response actual = patchJson(url, new StringEntity(Mapper.write(expected)));

@@ -4,6 +4,7 @@ import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.todoservice.TodoServiceTestImpl;
 import kr.nanoit.db.impl.userservice.UserService;
+import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.dto.TodoDto;
 import kr.nanoit.object.entity.TodoEntity;
 import kr.nanoit.utils.Mapper;
@@ -92,74 +93,10 @@ class PatchTodoTest {
         assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("parse failed");
     }
-
-    @Test
-    @DisplayName("PATCH / todo-> createdAt 이  null 일 경우 badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_createdAt_is_null() throws IOException {
-        // given
-        String json = "{\"modifiedAt\": \"2022-02-02 12:12:12\" ,\"content\": \"안녕하세요 수정 전입니다\" , \"writer\" : \"Leejeongseob\"}";
-        String url = "http://localhost:" + port + "/todo";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = patchJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: createdAt");
-    }
-
-    @Test
-    @DisplayName("PATCH / todo-> content 이  null 일 경우 badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_content_is_null() throws IOException {
-        // given
-        String json = "{\"createdAt\": \"2022-02-02 12:12:12\" ,\"modifiedAt\": \"2022-02-02 12:13:13\" , \"writer\" : \"Leejeongseob\"}";
-        String url = "http://localhost:" + port + "/todo";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = patchJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: content");
-    }
-
-    @Test
-    @DisplayName("PATCH / todo-> modifiedAt 이  null 일 경우 badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_modifiedAt_is_null() throws IOException {
-        // given
-        String json = "{\"createdAt\": \"2022-02-02 12:12:12\" ,\"content\": \"안녕하세요 수정 전입니다\" , \"writer\" : \"Leejeongseob\"}";
-        String url = "http://localhost:" + port + "/todo";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = patchJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: modified");
-    }
-
-    @Test
-    @DisplayName("PATCH / todo-> writer 이  null 일 경우 badRequest 가 떨어져야됨")
-    void should_return_bad_request_when_writer_is_null() throws IOException {
-        // given
-        String json = "{\"createdAt\": \"2022-02-02 12:12:12\" ,\"modifiedAt\": \"2022-03-03 12:12:13\" , \"content\" : \"안녕하세요 수정 전입니다\"}";
-        String url = "http://localhost:" + port + "/todo";
-        StringEntity stringEntity = new StringEntity(json);
-
-        // when
-        Response actual = patchJson(url, stringEntity);
-
-        // then
-        assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: writer");
-    }
-
+    
     @Test
     @DisplayName("PATCH / todo-> todo 정보 수정 요청을 했을때 정상이면 요청했던 TODO 정보가 내려와야 함")
-    void should_return_ok_when_todo_patch() throws IOException, SQLException {
+    void should_return_ok_when_todo_patch() throws IOException, SQLException, UpdateException {
         // given
         TodoEntity originalTodoData = todoService.save(new TodoEntity(0, "2022-03-03 12:12:12", "2022-04-04 12:12:12", "before modified", "lee"));
         TodoDto expected = new TodoDto(1, "2022-03-03 12:12:12", "2022-04-04 12:12:12", "after modified ", "lee");

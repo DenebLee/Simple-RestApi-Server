@@ -41,11 +41,9 @@ public class UserServicePostgreSQLImpl implements UserService {
                 userEntity.setEmail(resultSet.getString("email"));
                 return userEntity;
             } else {
-                throw new FindFailedException("not found result set");
+                return null;
             }
-        } catch (FindFailedException e) {
-            throw new FindFailedException(e.getReason());
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
             throw new FindFailedException("failed found query");
         }
@@ -93,7 +91,7 @@ public class UserServicePostgreSQLImpl implements UserService {
             if (affectedRow == 0) {
                 throw new DeleteException("There are no deleted rows");
             }
-        }catch (DeleteException e) {
+        } catch (DeleteException e) {
             e.printStackTrace();
             throw new DeleteException(e.getReason());
         } catch (Exception e) {
@@ -109,6 +107,23 @@ public class UserServicePostgreSQLImpl implements UserService {
         if (userEntity != null) {
             try (Connection connection = dbcp.getConnection();
                  Statement statement = connection.createStatement();) {
+                ResultSet rs = statement.executeQuery(UserServicePostgreSqlQuerys.columnDuplicateValueUpdate(userEntity.getUsername(), userEntity.getEmail()));
+
+                int resultCount = 0;
+                if (rs.next()) {
+                    resultCount = rs.getInt(1);
+                }
+                if (resultCount > 0) {
+//                    if(rs.getString("username") == null){
+//                        throw new UpdateException("Duplicate username exists in column ");
+//                    }
+//                    if(rs.getString("email") == null){
+//                        throw new UpdateException("Duplicate email exists in column");
+//                    }
+                    throw new UpdateException("Duplicate value exists in column");
+                }
+                rs.close();
+
                 int affectRow = 0;
 
                 if (userEntity.getUsername() != null) {
@@ -127,6 +142,9 @@ public class UserServicePostgreSQLImpl implements UserService {
                 statement.close();
                 return userEntity;
 
+            } catch (UpdateException e) {
+                log.error(e.getMessage());
+                throw new UpdateException(e.getReason());
             } catch (FindFailedException e) {
                 log.error(e.getMessage());
                 throw new UpdateException(e.getReason());

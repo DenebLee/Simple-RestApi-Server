@@ -88,16 +88,16 @@ class TodoServicePostgreSQLImpleTest {
     @DisplayName("TodoServicePostgreSQLImpleTest TodoEntity 정상적으로 조회 되는지")
     void should_findById() throws SQLException, FindFailedException {
         // given
-        String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(System.currentTimeMillis());
-        TodoEntity expected = todoService.save(new TodoEntity(0, createAt, null, "안녕하세요 오늘은 시간 변환 때문에 힘들었어요", "lee"));
+
+        TodoEntity expected = todoService.save(new TodoEntity(0, null, null, "안녕하세요 오늘은 시간 변환 때문에 힘들었어요", "lee"));
 
         // when
         TodoEntity actual = todoService.findById(expected.getTodoId());
 
         // then
         assertThat(actual.getTodoId()).isEqualTo(expected.getTodoId());
-        assertThat(actual.getCreatedAt()).isEqualTo(expected.getCreatedAt());
         assertThat(actual.getContent()).isEqualTo(expected.getContent());
+        assertThat(actual.getWriter()).isEqualTo(expected.getWriter());
     }
 
     @Test

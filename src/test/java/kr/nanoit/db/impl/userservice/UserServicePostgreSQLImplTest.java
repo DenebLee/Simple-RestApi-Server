@@ -1,6 +1,9 @@
 package kr.nanoit.db.impl.userservice;
 
 import kr.nanoit.db.impl.PostgreSqlDbcp;
+import kr.nanoit.exception.CreateFailedException;
+import kr.nanoit.exception.DeleteException;
+import kr.nanoit.exception.FindFailedException;
 import kr.nanoit.exception.UpdateException;
 import kr.nanoit.object.config.DataBaseConfig;
 import kr.nanoit.object.entity.UserEntity;
@@ -63,7 +66,7 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 저장되는지 확인")
-    void should_save() {
+    void should_save() throws CreateFailedException, FindFailedException {
         // given
         UserEntity expected = createTestUserEntity();
 
@@ -82,9 +85,9 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest UserEntity 정상적으로 조회 되는지")
-    void should_findById() {
+    void should_findById() throws CreateFailedException, FindFailedException {
         // given
-        UserEntity expected = userService.save(createTestUserEntity());
+        UserEntity expected = userService.save(new UserEntity(0,"test", "123123", "ee@ee.com"));
 
         // when
         UserEntity actual = userService.findById(expected.getId());
@@ -98,9 +101,9 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest userEntity 정상적으로 삭제 되는지")
-    void should_delete() {
+    void should_delete() throws CreateFailedException, DeleteException, FindFailedException {
         // given
-        UserEntity expected = userService.save(createTestUserEntity());
+        UserEntity expected = userService.save(new UserEntity(0,"elel", "4444", "fdf@fdf.com"));
 
         // when
         boolean actual = userService.deleteById(expected.getId());
@@ -112,9 +115,9 @@ class UserServicePostgreSQLImplTest {
 
     @Test
     @DisplayName("UserServicePostgreSQLImpleTest userEntity 정상적으로 수정 되는지")
-    void should_update() throws UpdateException {
+    void should_update() throws UpdateException, CreateFailedException {
         // given
-        UserEntity originalUserDataExpected = userService.save(createTestUserEntity());
+        UserEntity originalUserDataExpected = userService.save(new UserEntity(0,"tete","123123", "t3t@aaa.com"));
         UserEntity updateExpected = new UserEntity(originalUserDataExpected.getId(), "LeeJeongSeob", "444", "post@naver.com");
 
         // when

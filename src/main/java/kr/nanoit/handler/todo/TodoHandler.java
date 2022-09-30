@@ -51,7 +51,8 @@ public class TodoHandler implements HttpHandler {
             log.error("handler error", e);
         }
     }
-    private static void badRequest(HttpExchange exchange){
+
+    private static void badRequest(HttpExchange exchange) {
         try {
             Headers headers = exchange.getResponseHeaders();
             headers.add(HEADER_CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8);

@@ -4,6 +4,7 @@ import kr.nanoit.SandBoxHttpServer;
 import kr.nanoit.db.impl.todoservice.TodoService;
 import kr.nanoit.db.impl.userservice.UserService;
 import kr.nanoit.db.impl.userservice.UserServiceTestImpl;
+import kr.nanoit.exception.CreateFailedException;
 import kr.nanoit.object.entity.UserEntity;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -92,12 +93,12 @@ class GetUserTest {
 
         // then
         assertThat(actual.code).isEqualTo(400);
-        assertThat(actual.body).contains("not found: user.id");
+        assertThat(actual.body).contains("not found: user");
     }
 
     @Test
     @DisplayName("GET / user ->  요청했을때 OK, USER 가 내려와야 됨")
-    void should_return_ok_when_user() throws IOException {
+    void should_return_ok_when_user() throws IOException, CreateFailedException {
         // given
         UserEntity user = userService.save(new UserEntity(0, "test01", "123123", "test@test.com"));
         String url = "http://localhost:" + port + "/user?id=1";
